@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 // Middleware for Clerk authentication
 
-// Define routes that should be public
+// Define routes that should be public .
 const isPublicRoute = createRouteMatcher([
     "/",
     "/sign-in(.*)",
