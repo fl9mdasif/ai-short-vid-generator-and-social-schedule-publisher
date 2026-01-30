@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Video, Menu } from "lucide-react";
 import { motion } from "framer-motion";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 
 export function Navbar() {
     return (
@@ -44,12 +45,27 @@ export function Navbar() {
                 </nav>
 
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" className="hidden text-zinc-400 hover:text-white md:flex">
-                        Log in
-                    </Button>
-                    <Button className="bg-indigo-600 font-semibold text-white hover:bg-indigo-700">
-                        Get Started
-                    </Button>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <Button variant="ghost" className="hidden text-zinc-400 hover:text-white md:flex">
+                                Log in
+                            </Button>
+                        </SignInButton>
+                        <SignInButton mode="modal">
+                            <Button className="bg-indigo-600 font-semibold text-white hover:bg-indigo-700">
+                                Get Started
+                            </Button>
+                        </SignInButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <UserButton
+                            appearance={{
+                                elements: {
+                                    avatarBox: "h-10 w-10"
+                                }
+                            }}
+                        />
+                    </SignedIn>
                     <Button variant="ghost" size="icon" className="md:hidden text-white">
                         <Menu className="h-6 w-6" />
                     </Button>

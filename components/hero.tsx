@@ -27,7 +27,7 @@ export function Hero() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1, duration: 0.5 }}
-                        className="max-w-4xl text-5xl font-extrabold tracking-tight text-white md:text-7xl lg:text-8xl"
+                        className="max-w-4xl text-5xl font-extrabold tracking-tight text-white md:text-4xl lg:text-6xl"
                     >
                         Create Viral Shorts <br />
                         <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
