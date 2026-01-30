@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Play, Sparkles, Calendar, Zap, Video } from "lucide-react";
+import { Play, Sparkles, Calendar, Zap, Video, Mic } from "lucide-react";
 
 export function Hero() {
     return (
@@ -71,7 +71,9 @@ export function Hero() {
                                     { icon: Zap, label: "AI Generation", color: "text-yellow-400" },
                                     { icon: Calendar, label: "Auto Scheduler", color: "text-green-400" },
                                     { icon: Sparkles, label: "Smart Captions", color: "text-blue-400" },
-                                    { icon: Video, label: "HD Export", color: "text-indigo-400" }
+                                    { icon: Video, label: "HD Export", color: "text-indigo-400" }, {
+                                        icon: Mic, label: "AI Voice Over", color: "text-red-400"
+                                    }
                                 ].map((item, i) => (
                                     <div key={i} className="flex flex-col items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5">
                                         <item.icon className={`h-8 w-8 ${item.color}`} />
