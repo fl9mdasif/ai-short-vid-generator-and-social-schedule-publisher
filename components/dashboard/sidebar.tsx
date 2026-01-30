@@ -50,10 +50,12 @@ export function Sidebar() {
             <div className="flex flex-1 flex-col justify-between px-4 py-6">
                 <div className="space-y-6">
                     {/* Create New Series Button */}
-                    <Button className="w-full justify-start gap-2 h-12 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all hover:scale-[1.02]">
-                        <Plus className="h-5 w-5" />
-                        Create New Series
-                    </Button>
+                    <Link href="/dashboard/create">
+                        <Button className="mb-6 mt-2 w-full justify-start gap-2 h-12 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all hover:scale-[1.02]">
+                            <Plus className="h-5 w-5" />
+                            Create New Series
+                        </Button>
+                    </Link>
 
                     {/* Navigation Links */}
                     <nav className="space-y-2">
