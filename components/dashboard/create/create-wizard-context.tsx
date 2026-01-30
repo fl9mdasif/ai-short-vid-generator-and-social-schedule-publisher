@@ -22,6 +22,9 @@ export interface CreateWizardData {
         preview: string;
         gender: string;
     };
+    selectedBgMusic: string[]; // List of selected music URLs
+    selectedVideoStyle: string; // ID of selected video style
+    selectedCaptionStyle: string; // ID of selected caption style
 }
 
 interface CreateWizardContextType {
@@ -48,6 +51,9 @@ export function CreateWizardProvider({ children }: { children: ReactNode }) {
         customNicheDescription: "",
         language: undefined,
         voice: undefined,
+        selectedBgMusic: [],
+        selectedVideoStyle: "",
+        selectedCaptionStyle: "",
     });
     const [canGoToNextStep, setCanGoToNextStep] = useState(false);
 

@@ -5,6 +5,9 @@ import { WizardStepper } from "@/components/dashboard/create/wizard-stepper";
 import { WizardFooter } from "@/components/dashboard/create/wizard-footer";
 import { NicheSelection } from "@/components/dashboard/create/steps/niche-selection";
 import { VoiceSelection } from "@/components/dashboard/create/steps/voice-selection";
+import { BgMusicSelection } from "@/components/dashboard/create/steps/bg-music-selection";
+import { VideoStyleSelection } from "@/components/dashboard/create/steps/video-style-selection";
+import { CaptionSelection } from "@/components/dashboard/create/steps/caption-selection";
 import { motion, AnimatePresence } from "framer-motion";
 
 function WizardContent() {
@@ -28,7 +31,10 @@ function WizardContent() {
                     >
                         {currentStep === 1 && <NicheSelection />}
                         {currentStep === 2 && <VoiceSelection />}
-                        {currentStep > 2 && (
+                        {currentStep === 3 && <BgMusicSelection />}
+                        {currentStep === 4 && <VideoStyleSelection />}
+                        {currentStep === 5 && <CaptionSelection />}
+                        {currentStep > 5 && (
                             <div className="flex flex-col items-center justify-center h-[400px] text-zinc-500">
                                 <p className="text-xl">Step {currentStep} Content Placeholder</p>
                             </div>

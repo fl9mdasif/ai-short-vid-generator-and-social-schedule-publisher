@@ -72,9 +72,9 @@ export function VoiceSelection() {
             animate={{ opacity: 1 }}
             className="w-full max-w-5xl mx-auto"
         >
-            <div className="text-center mb-10">
-                <h2 className="font-extrabold text-3xl md:text-5xl mb-4 text-white">
-                    Select <span className="text-indigo-500">Language & Voice</span>
+            <div className="text-left mb-10">
+                <h2 className="font-extrabold text-2xl md:text-3xl lg:text-4xl mb-4">
+                    Select <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">Language & Voice</span>
                 </h2>
                 <p className="text-zinc-400">Choose the perfect voice for your generated video.</p>
             </div>

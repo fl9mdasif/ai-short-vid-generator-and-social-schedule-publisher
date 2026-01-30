@@ -14,8 +14,8 @@ export function WizardFooter() {
     } = useCreateWizard();
 
     return (
-        <div className="mt-12 flex items-center justify-between border-t border-white/5 pt-8">
-            <div>
+        <div className="mt-12 flex flex-col-reverse md:flex-row items-center justify-between border-t border-white/5 pt-8 gap-4">
+            <div className="w-full md:w-auto flex justify-center md:justify-start">
                 {currentStep > 1 && (
                     <Button
                         variant="default"

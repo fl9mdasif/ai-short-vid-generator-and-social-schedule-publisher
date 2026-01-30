@@ -50,7 +50,7 @@ export function NicheSelection() {
             className="w-full max-w-4xl mx-auto"
         >
             <div className=" mb-10">
-                <h2 className="font-extrabold text-3xl md:text-5xl lg:text-6xl mb-4">
+                <h2 className="font-extrabold text-2xl md:text-3xl lg:text-4xl mb-4">
                     Choose Your <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">Niche</span>
                 </h2>
                 <p className="text-zinc-400 text-lg">Select a pre-defined niche or define your own to tailor your content.</p>
