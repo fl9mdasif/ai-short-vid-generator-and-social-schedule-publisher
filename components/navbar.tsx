@@ -59,9 +59,9 @@ export function Navbar() {
                     </SignedOut>
                     <SignedIn>
                         <Link href="/dashboard">
-                            <Button variant="ghost" className="text-zinc-400 hover:text-white">
+                            <span className="text-zinc-400 hover:text-white">
                                 Dashboard
-                            </Button>
+                            </span>
                         </Link>
                         <UserButton
                             appearance={{

@@ -8,6 +8,7 @@ import { VoiceSelection } from "@/components/dashboard/create/steps/voice-select
 import { BgMusicSelection } from "@/components/dashboard/create/steps/bg-music-selection";
 import { VideoStyleSelection } from "@/components/dashboard/create/steps/video-style-selection";
 import { CaptionSelection } from "@/components/dashboard/create/steps/caption-selection";
+import { SeriesDetails } from "@/components/dashboard/create/steps/series-details";
 import { motion, AnimatePresence } from "framer-motion";
 
 function WizardContent() {
@@ -34,7 +35,8 @@ function WizardContent() {
                         {currentStep === 3 && <BgMusicSelection />}
                         {currentStep === 4 && <VideoStyleSelection />}
                         {currentStep === 5 && <CaptionSelection />}
-                        {currentStep > 5 && (
+                        {currentStep === 6 && <SeriesDetails />}
+                        {currentStep > 6 && (
                             <div className="flex flex-col items-center justify-center h-[400px] text-zinc-500">
                                 <p className="text-xl">Step {currentStep} Content Placeholder</p>
                             </div>

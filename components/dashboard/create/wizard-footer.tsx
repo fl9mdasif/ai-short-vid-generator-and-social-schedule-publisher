@@ -37,7 +37,7 @@ export function WizardFooter() {
                     className={`bg-indigo-600 text-white hover:bg-indigo-500 transition-all ${canGoToNextStep ? "opacity-100 shadow-[0_0_20px_rgba(79,70,229,0.4)]" : "opacity-50 cursor-not-allowed"
                         }`}
                 >
-                    {currentStep === totalSteps ? "Finish" : "Continue"}
+                    {currentStep === totalSteps ? "Schedule" : "Continue"}
                     <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
             </div>

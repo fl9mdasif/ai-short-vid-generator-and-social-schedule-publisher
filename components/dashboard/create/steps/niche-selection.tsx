@@ -105,7 +105,7 @@ export function NicheSelection() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.3 }}
-                        className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[500px] overflow-y-auto pr-2 custom-scrollbar"
+                        className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[400px] overflow-y-auto pr-2 custom-scrollbar"
                     >
                         {niches.map((niche) => {
                             const isSelected = formData.selectedNiche === niche.id;
@@ -115,29 +115,29 @@ export function NicheSelection() {
                                     key={niche.id}
                                     onClick={() => handleNicheSelect(niche.id)}
                                     className={`
-                                        cursor-pointer group relative p-6 rounded-xl border-2 transition-all duration-300
+                                        cursor-pointer group relative p-3 rounded-xl border-2 transition-all duration-300
                                         ${isSelected
                                             ? "bg-indigo-50/50 border-indigo-500 shadow-md ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#09090b]"
                                             : "bg-white border-zinc-200 hover:border-indigo-300 hover:shadow-lg hover:-translate-y-1"
                                         }
                                     `}
                                 >
-                                    <div className="flex items-start gap-5">
-                                        <div className={`p-4 rounded-xl transition-all duration-300 ${isSelected
+                                    <div className="flex items-start gap-3">
+                                        <div className={`p-2.5 rounded-xl transition-all duration-300 ${isSelected
                                             ? "bg-indigo-600 text-white shadow-lg scale-110"
                                             : "bg-zinc-100 text-zinc-500 group-hover:text-indigo-600 group-hover:bg-indigo-50"
                                             }`}>
-                                            <Icon className="w-7 h-7" />
+                                            <Icon className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <h3 className={`font-bold text-lg mb-2 transition-colors ${isSelected ? "text-indigo-900" : "text-zinc-900 group-hover:text-indigo-700"
+                                            <h3 className={`font-bold text-base mb-0.5 transition-colors ${isSelected ? "text-indigo-900" : "text-zinc-900 group-hover:text-indigo-700"
                                                 }`}>{niche.title}</h3>
-                                            <p className={`text-sm leading-relaxed transition-colors ${isSelected ? "text-indigo-700/80" : "text-zinc-500 group-hover:text-zinc-600"
+                                            <p className={`text-xs leading-snug transition-colors ${isSelected ? "text-indigo-700/80" : "text-zinc-500 group-hover:text-zinc-600"
                                                 }`}>{niche.description}</p>
                                         </div>
                                     </div>
                                     {isSelected && (
-                                        <div className="absolute top-4 right-4 w-3 h-3 bg-indigo-500 rounded-full shadow-[0_0_8px_#818cf8] animate-pulse"></div>
+                                        <div className="absolute top-3 right-3 w-2.5 h-2.5 bg-indigo-500 rounded-full shadow-[0_0_8px_#818cf8] animate-pulse"></div>
                                     )}
                                 </div>
                             );

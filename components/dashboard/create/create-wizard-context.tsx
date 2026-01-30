@@ -25,6 +25,11 @@ export interface CreateWizardData {
     selectedBgMusic: string[]; // List of selected music URLs
     selectedVideoStyle: string; // ID of selected video style
     selectedCaptionStyle: string; // ID of selected caption style
+    seriesName: string;
+    duration: string;
+
+    platform: string[];
+    publishTime: string;
 }
 
 interface CreateWizardContextType {
@@ -54,6 +59,10 @@ export function CreateWizardProvider({ children }: { children: ReactNode }) {
         selectedBgMusic: [],
         selectedVideoStyle: "",
         selectedCaptionStyle: "",
+        seriesName: "",
+        duration: "",
+        platform: [],
+        publishTime: "",
     });
     const [canGoToNextStep, setCanGoToNextStep] = useState(false);
 

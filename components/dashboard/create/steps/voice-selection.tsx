@@ -104,7 +104,7 @@ export function VoiceSelection() {
                                 initial={{ opacity: 0, y: -10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
-                                className="absolute top-full left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-xl shadow-xl max-h-[300px] overflow-y-auto custom-scrollbar z-50"
+                                className="absolute top-full left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-xl shadow-xl max-h-[250px] overflow-y-auto custom-scrollbar z-50"
                             >
                                 {Languages.map((lang) => (
                                     <div
@@ -170,7 +170,7 @@ export function VoiceSelection() {
             </div>
 
             {/* Voices Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 {availableVoices.map((voice) => {
                     const isSelected = formData.voice?.modelName === voice.modelName;
 
@@ -179,14 +179,14 @@ export function VoiceSelection() {
                             key={voice.modelName}
                             onClick={() => handleVoiceSelect(voice)}
                             className={`
-                                relative p-6 rounded-xl border transition-all duration-300 cursor-pointer group
+                                relative p-3 rounded-xl border transition-all duration-300 cursor-pointer group
                                 ${isSelected
                                     ? "bg-white border-indigo-500 shadow-md ring-2 ring-indigo-500 ring-offset-2 ring-offset-[#09090b]"
                                     : "bg-white border-zinc-200 hover:border-indigo-300 hover:shadow-xl hover:-translate-y-1"
                                 }
                             `}
                         >
-                            <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center justify-between mb-3">
                                 <div>
                                     <h3 className="font-bold text-lg text-zinc-900 mb-1">
                                         {voice.modelName.split('-')[2] || voice.modelName}
