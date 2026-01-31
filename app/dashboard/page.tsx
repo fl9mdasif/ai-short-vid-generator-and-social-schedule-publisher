@@ -5,7 +5,7 @@ import { SeriesCard } from "@/components/dashboard/series-card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { syncUser } from "@/actions/user";
+import { syncUser } from "@/app/actions/user";
 
 export default async function DashboardPage() {
     const user = await currentUser();
