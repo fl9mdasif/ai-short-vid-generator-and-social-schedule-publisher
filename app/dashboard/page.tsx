@@ -1,5 +1,10 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { getUserSeries } from "@/app/actions/dashboard-actions";
+import { SeriesCard } from "@/components/dashboard/series-card";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 import { syncUser } from "@/actions/user";
 
 export default async function DashboardPage() {
@@ -12,6 +17,9 @@ export default async function DashboardPage() {
     // Sync user to Supabase
     await syncUser();
 
+    // Fetch user series
+    const { data: seriesList, error } = await getUserSeries();
+
     return (
         <div className="flex flex-col gap-8">
             <div className="flex items-center justify-between">
@@ -19,21 +27,36 @@ export default async function DashboardPage() {
                     <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Dashboard</h1>
                     <p className="text-zinc-500">Welcome back, {user.firstName}!</p>
                 </div>
+                <Link href="/dashboard/create">
+                    <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg shadow-indigo-500/20">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Create New Series
+                    </Button>
+                </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-6 rounded-xl bg-white border border-zinc-200 shadow-sm transition-all hover:shadow-md">
-                    <h2 className="text-xl font-semibold mb-2 text-zinc-900">Recent Videos</h2>
-                    <p className="text-zinc-500 text-sm">No videos generated yet.</p>
-                </div>
-                <div className="p-6 rounded-xl bg-white border border-zinc-200 shadow-sm transition-all hover:shadow-md">
-                    <h2 className="text-xl font-semibold mb-2 text-zinc-900">Scheduled Posts</h2>
-                    <p className="text-zinc-500 text-sm">No posts scheduled.</p>
-                </div>
-                <div className="p-6 rounded-xl bg-white border border-zinc-200 shadow-sm transition-all hover:shadow-md">
-                    <h2 className="text-xl font-semibold mb-2 text-zinc-900">Quick Stats</h2>
-                    <p className="text-zinc-500 text-sm">0 Views (Last 30 Days)</p>
-                </div>
+            <div className="space-y-6">
+                <h2 className="text-xl font-semibold text-zinc-900">Your Series</h2>
+
+                {seriesList && seriesList.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {seriesList.map((series) => (
+                            <SeriesCard key={series.id} series={series} />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="p-12 text-center border-2 border-dashed border-zinc-200 rounded-xl bg-zinc-50/50">
+                        <div className="max-w-md mx-auto">
+                            <h3 className="text-lg font-medium text-zinc-900 mb-2">No series created yet</h3>
+                            <p className="text-zinc-500 mb-6">Get started by creating your first AI-generated video series.</p>
+                            <Link href="/dashboard/create">
+                                <Button variant="outline">
+                                    Create Series
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

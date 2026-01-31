@@ -43,18 +43,35 @@ export async function saveWizardData(data: CreateWizardData) {
             status: "pending"
         };
 
-        const { data: insertedData, error } = await supabase
-            .from("video_generations")
-            .insert(dbData)
-            .select()
-            .single();
+        if (data.id) {
+            // Update existing record
+            const { data: updatedData, error } = await supabase
+                .from("video_generations")
+                .update(dbData)
+                .eq("id", data.id)
+                .eq("user_clerk_id", userId)
+                .select()
+                .single();
 
-        if (error) {
-            console.error("Error saving wizard data:", error);
-            return { success: false, error: error.message };
+            if (error) {
+                console.error("Error updating wizard data:", error);
+                return { success: false, error: error.message };
+            }
+            return { success: true, data: updatedData };
+        } else {
+            // Insert new record
+            const { data: insertedData, error } = await supabase
+                .from("video_generations")
+                .insert(dbData)
+                .select()
+                .single();
+
+            if (error) {
+                console.error("Error saving wizard data:", error);
+                return { success: false, error: error.message };
+            }
+            return { success: true, data: insertedData };
         }
-
-        return { success: true, data: insertedData };
 
     } catch (error) {
         console.error("Unexpected error saving wizard data:", error);

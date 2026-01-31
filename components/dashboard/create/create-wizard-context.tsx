@@ -5,6 +5,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 export type NicheType = "available" | "custom";
 
 export interface CreateWizardData {
+    id?: string;
     nicheType: NicheType;
     selectedNiche: string;
     customNiche: string;
@@ -48,7 +49,7 @@ interface CreateWizardContextType {
 
 const CreateWizardContext = createContext<CreateWizardContextType | undefined>(undefined);
 
-export function CreateWizardProvider({ children }: { children: ReactNode }) {
+export function CreateWizardProvider({ children, initialData }: { children: ReactNode, initialData?: Partial<CreateWizardData> }) {
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 6;
     const [formData, setFormData] = useState<CreateWizardData>({
@@ -65,6 +66,7 @@ export function CreateWizardProvider({ children }: { children: ReactNode }) {
         duration: "",
         platform: [],
         publishTime: "",
+        ...initialData
     });
     const [canGoToNextStep, setCanGoToNextStep] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
