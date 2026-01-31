@@ -17,6 +17,7 @@ import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { deleteSeries, toggleSeriesStatus } from "@/app/actions/dashboard-actions";
+import { triggerVideoGeneration } from "@/app/actions/generate-video-action";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -29,6 +30,7 @@ export function SeriesCard({ series }: SeriesCardProps) {
     const { toast } = useToast();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
 
     // Find style image
     const videoStyle = VideoStyles.find(
@@ -77,6 +79,25 @@ export function SeriesCard({ series }: SeriesCardProps) {
 
     const handleEdit = () => {
         router.push(`/dashboard/edit/${series.id}`);
+    };
+
+    const handleGenerate = async () => {
+        setIsGenerating(true);
+        const result = await triggerVideoGeneration(series.id);
+        setIsGenerating(false);
+
+        if (result.success) {
+            toast({
+                title: "Generation Started",
+                description: "Video generation has been queued in the background.",
+            });
+        } else {
+            toast({
+                title: "Error",
+                description: "Failed to start generation: " + result.error,
+                variant: "destructive",
+            });
+        }
     };
 
     return (
@@ -182,9 +203,18 @@ export function SeriesCard({ series }: SeriesCardProps) {
                         <Video className="mr-2 h-3.5 w-3.5" />
                         Permissions
                     </Button>
-                    <Button size="sm" className="w-full text-xs bg-indigo-600 hover:bg-indigo-700 text-white" onClick={() => toast({ description: "Generate video coming soon" })}>
-                        <Zap className="mr-2 h-3.5 w-3.5" />
-                        Generate
+                    <Button
+                        size="sm"
+                        className="w-full text-xs bg-indigo-600 hover:bg-indigo-700 text-white"
+                        onClick={handleGenerate}
+                        disabled={isGenerating}
+                    >
+                        {isGenerating ? (
+                            <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                            <Zap className="mr-2 h-3.5 w-3.5" />
+                        )}
+                        {isGenerating ? "Starting..." : "Generate"}
                     </Button>
                 </div>
             </div>
