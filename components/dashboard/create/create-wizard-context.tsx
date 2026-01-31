@@ -42,6 +42,8 @@ interface CreateWizardContextType {
     goToStep: (step: number) => void;
     canGoToNextStep: boolean;
     setCanGoToNextStep: (canGo: boolean) => void;
+    isSaving: boolean;
+    setIsSaving: (isSaving: boolean) => void;
 }
 
 const CreateWizardContext = createContext<CreateWizardContextType | undefined>(undefined);
@@ -65,6 +67,7 @@ export function CreateWizardProvider({ children }: { children: ReactNode }) {
         publishTime: "",
     });
     const [canGoToNextStep, setCanGoToNextStep] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const goToNextStep = () => {
         if (currentStep < totalSteps) {
@@ -103,6 +106,8 @@ export function CreateWizardProvider({ children }: { children: ReactNode }) {
                 goToStep,
                 canGoToNextStep,
                 setCanGoToNextStep,
+                isSaving,
+                setIsSaving
             }}
         >
             {children}
