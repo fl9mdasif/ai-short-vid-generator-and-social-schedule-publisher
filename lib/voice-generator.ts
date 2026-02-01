@@ -42,10 +42,11 @@ async function generateFonadaAudio(text: string, voice: string, language: string
         throw new Error("Missing FONADALAB_API_KEY environment variable");
     }
 
-    // Fonada has a limit of ~450 chars or 30s. We chunk the text.
-    const MAX_CHARS = 400; // Safety margin below 450
+    // FonadaLabs FREE version limits: 30 seconds audio OR 450 characters max per request
+    const MAX_CHARS = 400; // Safety margin below 450 char limit
     const chunks = chunkText(text, MAX_CHARS);
 
+    console.log(`Fonada: Input text length: ${text.length} chars`);
     console.log(`Fonada: Splitting text into ${chunks.length} chunks`);
 
     const audioBuffers: Buffer[] = [];
@@ -82,47 +83,61 @@ function chunkText(text: string, maxLength: number): string[] {
     const chunks: string[] = [];
     let currentChunk = "";
 
-    // Split by sentences first
-    const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+    // Split by sentences - support both English (.,!,?) and Hindi/Devanagari (।) punctuation
+    // Hindi uses purna viram (।) as sentence delimiter
+    const sentences = text.match(/[^.!?।]+[.!?।]+/g) || [text];
+
+    console.log(`Total sentences found: ${sentences.length}`);
 
     for (const sentence of sentences) {
-        if ((currentChunk + sentence).length <= maxLength) {
-            currentChunk += sentence;
+        const trimmedSentence = sentence.trim();
+
+        if ((currentChunk + " " + trimmedSentence).length <= maxLength) {
+            currentChunk += (currentChunk ? " " : "") + trimmedSentence;
         } else {
             // If the current chunk is not empty, push it
             if (currentChunk) {
                 chunks.push(currentChunk.trim());
+                console.log(`Chunk ${chunks.length}: ${currentChunk.length} chars`);
                 currentChunk = "";
             }
 
-            // If a single sentence is too long, strictly force split it
-            if (sentence.length > maxLength) {
-                // Split by comma or worst case hard character limit
-                // simplistic hard split for now to guarantee safety
-                let remaining = sentence;
+            // If a single sentence is too long, split it
+            if (trimmedSentence.length > maxLength) {
+                console.log(`Long sentence detected: ${trimmedSentence.length} chars, splitting...`);
+                let remaining = trimmedSentence;
                 while (remaining.length > 0) {
-                    let splitIndex = remaining.lastIndexOf(' ', maxLength);
-                    if (splitIndex === -1) splitIndex = maxLength; // No space, hard cut
+                    // Try to split at word boundary (space) near maxLength
+                    let splitIndex = maxLength;
+                    if (remaining.length > maxLength) {
+                        // Look for last space before maxLength
+                        const lastSpace = remaining.lastIndexOf(' ', maxLength);
+                        if (lastSpace > maxLength * 0.7) { // Only split at space if it's reasonably close
+                            splitIndex = lastSpace;
+                        }
+                    } else {
+                        splitIndex = remaining.length;
+                    }
 
-                    // If we are at the start and the first word is huge, just take maxLength
-                    if (splitIndex === 0) splitIndex = maxLength;
-
-                    // If splitting by space leaves us with a chunk > maxLength (shouldnt happen w logic above but safe guard)
-                    if (splitIndex > maxLength) splitIndex = maxLength;
-
-                    chunks.push(remaining.substring(0, splitIndex).trim());
+                    const chunk = remaining.substring(0, splitIndex).trim();
+                    if (chunk) {
+                        chunks.push(chunk);
+                        console.log(`Chunk ${chunks.length}: ${chunk.length} chars`);
+                    }
                     remaining = remaining.substring(splitIndex).trim();
                 }
             } else {
-                currentChunk = sentence;
+                currentChunk = trimmedSentence;
             }
         }
     }
 
     if (currentChunk) {
         chunks.push(currentChunk.trim());
+        console.log(`Final chunk ${chunks.length}: ${currentChunk.length} chars`);
     }
 
+    console.log(`Total chunks created: ${chunks.length}`);
     return chunks;
 }
 

@@ -27,6 +27,7 @@ export interface CreateWizardData {
     selectedVideoStyle: string; // ID of selected video style
     selectedCaptionStyle: string; // ID of selected caption style
     seriesName: string;
+    description: string; // Optional description to guide AI script generation
     duration: string;
 
     platform: string[];
@@ -63,6 +64,7 @@ export function CreateWizardProvider({ children, initialData }: { children: Reac
         selectedVideoStyle: "",
         selectedCaptionStyle: "",
         seriesName: "",
+        description: "", // NEW: Optional description
         duration: "",
         platform: [],
         publishTime: "",

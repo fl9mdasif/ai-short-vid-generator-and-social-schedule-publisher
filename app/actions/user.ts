@@ -1,7 +1,7 @@
 "use server";
 
-import { currentUser } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function syncUser() {
     try {
@@ -14,7 +14,7 @@ export async function syncUser() {
 
         console.log("Syncing user:", user.emailAddresses[0].emailAddress);
 
-        const { data: existingUser, error: fetchError } = await supabase
+        const { data: existingUser, error: fetchError } = await supabaseAdmin
             .from("users")
             .select("*")
             .eq("email", user.emailAddresses[0].emailAddress)
@@ -26,7 +26,7 @@ export async function syncUser() {
 
         if (!existingUser) {
             const name = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || user.username || "Anonymous";
-            const { error } = await supabase.from("users").insert({
+            const { error } = await supabaseAdmin.from("users").insert({
                 name,
                 email: user.emailAddresses[0].emailAddress,
                 clerk_id: user.id

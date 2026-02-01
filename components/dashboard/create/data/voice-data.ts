@@ -115,27 +115,28 @@ export const DeepgramVoices = [
 export const FonadalabVoices = [
     {
         "model": "fonadalab",
-        "modelName": "vaanee",
+        "modelName": "Vaanee",
         "preview": "fonadalab-vaanee.mp3",
         "gender": "female"
-    },
-    {
-        "model": "fonadalab",
-        "modelName": "chaitra",
-        "preview": "fonadalab-chaitra.mp3",
-        "gender": "female"
-    },
-    {
-        "model": "fonadalab",
-        "modelName": "meghra",
-        "preview": "fonadalab-meghra.mp3",
-        "gender": "male"
-    },
-    {
-        "model": "fonadalab",
-        "modelName": "nirvani",
-        "preview": "fonadalab-nirvani.mp3",
-        "gender": "female"
+
+        // {
+        //     "model": "fonadalab",
+        //     "modelName": "chaitra",
+        //     "preview": "fonadalab-chaitra.mp3",
+        //     "gender": "female"
+        // },
+        // {
+        //     "model": "fonadalab",
+        //     "modelName": "meghra",
+        //     "preview": "fonadalab-meghra.mp3",
+        //     "gender": "male"
+        // },
+        // {
+        //     "model": "fonadalab",
+        //     "modelName": "nirvani",
+        //     "preview": "fonadalab-nirvani.mp3",
+        //     "gender": "female"
+        // }
     }
 ];
 

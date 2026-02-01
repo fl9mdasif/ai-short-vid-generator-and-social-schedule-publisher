@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { revalidatePath } from "next/cache";
 
 export type VideoSeries = {
@@ -41,7 +41,7 @@ export async function getUserSeries() {
             return { success: false, error: "Unauthorized" };
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from("video_generations")
             .select("*")
             .eq("user_clerk_id", userId)
@@ -66,7 +66,7 @@ export async function getSeriesById(id: string) {
             return { success: false, error: "Unauthorized" };
         }
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from("video_generations")
             .select("*")
             .eq("id", id)
@@ -90,7 +90,7 @@ export async function deleteSeries(id: string) {
         const { userId } = await auth();
         if (!userId) return { success: false, error: "Unauthorized" };
 
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
             .from("video_generations")
             .delete()
             .eq("id", id)
@@ -116,7 +116,7 @@ export async function toggleSeriesStatus(id: string, currentStatus: string) {
 
         const newStatus = currentStatus === "paused" ? "active" : "paused"; // Simple toggle logic
 
-        const { error } = await supabase
+        const { error } = await supabaseAdmin
             .from("video_generations")
             .update({ status: newStatus })
             .eq("id", id)

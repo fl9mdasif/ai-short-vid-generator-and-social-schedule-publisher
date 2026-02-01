@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { CreateWizardData } from "@/components/dashboard/create/create-wizard-context";
 
 export async function saveWizardData(data: CreateWizardData) {
@@ -36,6 +36,7 @@ export async function saveWizardData(data: CreateWizardData) {
             selected_caption_style_id: data.selectedCaptionStyle || null,
 
             series_name: data.seriesName || null,
+            description: data.description || null, // NEW: Optional description
             duration: data.duration || null,
             platform: data.platform || [],
             publish_time: data.publishTime || null,
@@ -45,7 +46,7 @@ export async function saveWizardData(data: CreateWizardData) {
 
         if (data.id) {
             // Update existing record
-            const { data: updatedData, error } = await supabase
+            const { data: updatedData, error } = await supabaseAdmin
                 .from("video_generations")
                 .update(dbData)
                 .eq("id", data.id)
@@ -60,7 +61,7 @@ export async function saveWizardData(data: CreateWizardData) {
             return { success: true, data: updatedData };
         } else {
             // Insert new record
-            const { data: insertedData, error } = await supabase
+            const { data: insertedData, error } = await supabaseAdmin
                 .from("video_generations")
                 .insert(dbData)
                 .select()

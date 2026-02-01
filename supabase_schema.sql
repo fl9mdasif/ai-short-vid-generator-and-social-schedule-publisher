@@ -51,6 +51,7 @@ create table video_generations (
   
   -- Series Details
   series_name varchar(255),
+  description text, -- Optional description to guide script generation
   duration varchar(50),
   platform varchar(50)[], -- Array of platform names
   publish_time varchar(50),

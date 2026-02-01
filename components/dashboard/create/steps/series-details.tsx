@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
     Select,
@@ -116,6 +117,20 @@ export function SeriesDetails() {
                         value={formData.seriesName}
                         onChange={(e) => setFormData({ ...formData, seriesName: e.target.value })}
                         className="h-14 rounded-xl border-zinc-200 bg-zinc-50/50 text-base focus:ring-0 focus:border-zinc-400"
+                    />
+                </div>
+
+                {/* Description (Optional) */}
+                <div className="space-y-3">
+                    <Label htmlFor="description" className="text-base font-semibold text-zinc-900">
+                        Description <span className="text-zinc-400 font-normal">(Optional)</span>
+                    </Label>
+                    <Textarea
+                        id="description"
+                        placeholder="e.g., Focus on ancient Greek philosophy and practical life lessons"
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        className="min-h-[100px] rounded-xl border-zinc-200 bg-zinc-50/50 text-base focus:ring-0 focus:border-zinc-400 resize-none"
                     />
                 </div>
 
