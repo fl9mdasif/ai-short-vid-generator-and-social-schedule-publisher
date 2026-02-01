@@ -66,3 +66,30 @@ create index idx_video_generations_user_clerk_id on video_generations(user_clerk
 
 -- Disable RLS for now (trusted backend usage)
 alter table video_generations disable row level security;
+
+-- Create generated_video_assets table to store completed video assets
+-- One series can have MULTIPLE video records (scheduled generations)
+create table generated_video_assets (
+  id uuid primary key default uuid_generate_v4(),
+  series_id uuid references video_generations(id) not null,
+  
+  -- Generated content
+  script_json jsonb not null,
+  audio_url text not null,
+  captions_url text not null,
+  image_urls text[] not null, -- Array of image URLs from Replicate
+  
+  -- Metadata
+  video_number integer, -- Which video in the series (1, 2, 3, etc.)
+  status varchar(50) default 'completed',
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Index for faster queries by series (important since one series has many videos)
+create index idx_generated_video_assets_series_id on generated_video_assets(series_id);
+
+-- Index for querying by creation date
+create index idx_generated_video_assets_created_at on generated_video_assets(created_at);
+
+-- -- Disable RLS for trusted backend usage
+-- alter table generated_video_assets disable row level security;

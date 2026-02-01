@@ -1,8 +1,8 @@
 import { inngest } from "../client";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { model } from "@/lib/gemini";
 import { generateVideoScriptPrompt } from "@/lib/video-prompts";
 import { generateVoice } from "@/lib/voice-generator";
+import { genAI, model } from "@/lib/gemini";
 
 export const generateVideo = inngest.createFunction(
     { id: "generate-video" },
@@ -26,9 +26,17 @@ export const generateVideo = inngest.createFunction(
         const script = await step.run("generate-script", async () => {
             const prompt = generateVideoScriptPrompt(seriesData);
 
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            const text = response.text();
+            // Use new @google/genai API
+            const response = await genAI.models.generateContent({
+                model: model,
+                contents: prompt
+            });
+
+            const text = response.text;
+
+            if (!text) {
+                throw new Error("No response text from Gemini AI");
+            }
 
             try {
                 // Clean up markdown code blocks if present
@@ -78,30 +86,108 @@ export const generateVideo = inngest.createFunction(
             return publicData.publicUrl;
         });
 
-        // Step 4: Generate Caption using Model (Placeholder)
-        const captions = await step.run("generate-captions", async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            return [
-                { start: 0, end: 2, text: "Scene 1: Intro" },
-                { start: 2, end: 5, text: "Scene 2: Main Point" }
-            ];
+        // Step 4: Generate Captions from audio using Deepgram
+        const captionsUrl = await step.run("generate-captions", async () => {
+            console.log("Generating captions from audio:", audioUrl);
+
+            // Use Deepgram to transcribe audio and generate SRT captions
+            const { generateSRT } = await import("@/lib/caption-generator");
+            const srtContent = await generateSRT(audioUrl);
+
+            // Upload SRT file to Supabase Storage
+            const captionFileName = `${seriesData.id}/captions.srt`;
+            const { data, error } = await supabaseAdmin
+                .storage
+                .from('video-assets')
+                .upload(captionFileName, srtContent, {
+                    contentType: 'text/plain',
+                    upsert: true
+                });
+
+            if (error) {
+                throw new Error(`Failed to upload captions: ${error.message}`);
+            }
+
+            // Get Public URL
+            const { data: publicData } = supabaseAdmin
+                .storage
+                .from('video-assets')
+                .getPublicUrl(captionFileName);
+
+            console.log("Captions generated and uploaded successfully");
+            return publicData.publicUrl;
         });
 
-        // Step 5: Generate Images from image prompt (Placeholder)
+        // Step 5: Generate Images from visual prompts using Replicate
         const imageUrls = await step.run("generate-images", async () => {
-            await new Promise((resolve) => setTimeout(resolve, 3000));
-            return [
-                "https://example.com/image1.jpg",
-                "https://example.com/image2.jpg"
-            ];
+            console.log("Generating images from visual prompts...");
+            const { generateImage } = await import("@/lib/image-generator");
+
+            const generatedImageUrls: string[] = [];
+
+            // Generate one image for each scene's visual_prompt
+            for (let i = 0; i < script.scenes.length; i++) {
+                const scene = script.scenes[i];
+                console.log(`Generating image ${i + 1}/${script.scenes.length} for scene: ${scene.scene_number}`);
+
+                try {
+                    const imageUrl = await generateImage(scene.visual_prompt);
+                    generatedImageUrls.push(imageUrl);
+                    console.log(`Image ${i + 1} generated successfully`);
+                } catch (error) {
+                    console.error(`Failed to generate image for scene ${scene.scene_number}:`, error);
+                    throw error;
+                }
+            }
+
+            console.log(`All ${generatedImageUrls.length} images generated successfully`);
+            return generatedImageUrls;
         });
 
-        // Step 6: Save everything to database (Placeholder)
+        // Step 6: Save all generated assets to database
         const saveResult = await step.run("save-result", async () => {
-            // In a real scenario, we would update the series record or insert into a 'videos' table
-            // For now, we'll just log that we would have saved it.
-            // potentially update status to 'completed'
-            return { success: true, message: "Video generation data saved successfully" };
+            console.log("Saving generated video assets to database...");
+
+            // Get the count of existing videos for this series to determine video number
+            const { count } = await supabaseAdmin
+                .from('generated_video_assets')
+                .select('*', { count: 'exact', head: true })
+                .eq('series_id', seriesId);
+
+            const videoNumber = (count || 0) + 1;
+
+            // Insert into generated_video_assets table
+            const { data, error } = await supabaseAdmin
+                .from('generated_video_assets')
+                .insert({
+                    series_id: seriesId,
+                    script_json: script,
+                    audio_url: audioUrl,
+                    captions_url: captionsUrl,
+                    image_urls: imageUrls,
+                    video_number: videoNumber,
+                    status: 'completed'
+                })
+                .select()
+                .single();
+
+            if (error) {
+                console.error("Failed to save video assets:", error);
+                throw new Error(`Failed to save to database: ${error.message}`);
+            }
+
+            // Update video_generations status to completed
+            const { error: updateError } = await supabaseAdmin
+                .from('video_generations')
+                .update({ status: 'completed' })
+                .eq('id', seriesId);
+
+            if (updateError) {
+                console.error("Failed to update series status:", updateError);
+            }
+
+            console.log(`Video generation completed! Video #${videoNumber} saved successfully.`);
+            return { success: true, videoId: data.id, videoNumber, message: "Video assets saved successfully" };
         });
 
         return {
@@ -110,7 +196,7 @@ export const generateVideo = inngest.createFunction(
             videoData: {
                 script,
                 audioUrl,
-                captions,
+                captionsUrl,
                 imageUrls
             }
         };
