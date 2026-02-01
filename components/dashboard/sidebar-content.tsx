@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const sidebarLinks = [
-    { name: "Series", href: "/dashboard/series", icon: LayoutGrid },
+    { name: "Series", href: "/dashboard", icon: LayoutGrid },
     { name: "Videos", href: "/dashboard/videos", icon: Video },
     { name: "Guides", href: "/dashboard/guides", icon: BookOpen },
     { name: "Billing", href: "/dashboard/billing", icon: CreditCard },

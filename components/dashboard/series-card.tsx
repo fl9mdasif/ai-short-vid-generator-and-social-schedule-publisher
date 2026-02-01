@@ -83,13 +83,18 @@ export function SeriesCard({ series }: SeriesCardProps) {
 
     const handleGenerate = async () => {
         setIsGenerating(true);
+
+        // Navigate to videos page immediately
+        router.push('/dashboard/videos');
+
+        // Trigger generation in background
         const result = await triggerVideoGeneration(series.id);
         setIsGenerating(false);
 
         if (result.success) {
             toast({
                 title: "Generation Started",
-                description: "Video generation has been queued in the background.",
+                description: "Video generation has been queued. Check the Videos page for status.",
             });
         } else {
             toast({

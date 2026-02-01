@@ -1,20 +1,35 @@
-// Using Pollinations AI - Free tier (no auth required)
-// Simplified approach for better stability
+// Using Pollinations AI - Flux model (turbo servers are down)
+// Correct endpoint: gen.pollinations.ai with Authorization header
 
 export async function generateImage(prompt: string): Promise<string> {
     try {
-        console.log("Generating image with Pollinations AI for prompt:", prompt);
+        console.log("Generating image with Pollinations AI (Flux model) for prompt:", prompt);
 
-        // Use simple URL-based API without authentication (free tier)
+        const apiKey = process.env.POLLINATIONS_API_KEY;
+        if (!apiKey) {
+            throw new Error("Missing POLLINATIONS_API_KEY environment variable");
+        }
+
+        // Pollinations AI correct endpoint: gen.pollinations.ai
         const encodedPrompt = encodeURIComponent(prompt);
+        const imageUrl = `https://gen.pollinations.ai/image/${encodedPrompt}?model=flux&width=1024&height=1024&nologo=true&enhance=true`;
 
-        // Use default model (no model parameter for stability)
-        const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true`;
+        // Fetch the image with Authorization header
+        const response = await fetch(imageUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`
+            }
+        });
 
-        console.log("Image URL generated:", imageUrl);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Pollinations API Error: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+
+        console.log("Image generated successfully:", imageUrl);
 
         // The URL itself is the image - can be used directly
-        // Pollinations generates on-demand when the URL is accessed
         return imageUrl;
     } catch (error) {
         console.error("Pollinations Image Generation Error:", error);
