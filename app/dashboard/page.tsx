@@ -7,6 +7,10 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { syncUser } from "@/app/actions/user";
 
+// Force dynamic rendering to prevent caching issues with user-specific data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function DashboardPage() {
     const user = await currentUser();
 

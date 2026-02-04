@@ -41,6 +41,8 @@ export async function getUserSeries() {
             return { success: false, error: "Unauthorized" };
         }
 
+        console.log("[Dashboard] Fetching series for user:", userId);
+
         const { data, error } = await supabaseAdmin
             .from("video_generations")
             .select("*")
@@ -51,6 +53,8 @@ export async function getUserSeries() {
             console.error("Error fetching user series:", error);
             return { success: false, error: error.message };
         }
+
+        console.log("[Dashboard] Found", data?.length || 0, "series for user:", userId);
 
         return { success: true, data: data as VideoSeries[] };
     } catch (error) {
