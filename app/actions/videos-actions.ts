@@ -14,6 +14,8 @@ export async function getVideos(userId: string) {
                 audio_url,
                 captions_url,
                 image_urls,
+                final_video_url,
+                render_id,
                 video_number,
                 status,
                 created_at,
@@ -49,6 +51,8 @@ export async function getVideosBySeriesId(seriesId: string) {
                 audio_url,
                 captions_url,
                 image_urls,
+                final_video_url,
+                render_id,
                 video_number,
                 status,
                 created_at
