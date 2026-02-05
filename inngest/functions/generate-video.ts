@@ -145,89 +145,9 @@ export const generateVideo = inngest.createFunction(
             return generatedImageUrls;
         });
 
-        // Step 7: Render Video using Remotion Lambda
-        const renderResult = await step.run("render-video", async () => {
-            console.log("Triggering Remotion Lambda render...");
-            const { renderMediaOnLambda } = await import("@remotion/lambda/client");
-            const { COMPOSITION_ID } = await import("@/remotion/constants");
-
-            const REGION = process.env.REMOTION_LAMBDA_REGION;
-            const FUNCTION_NAME = process.env.REMOTION_LAMBDA_FUNCTION_NAME;
-            const SERVE_URL = process.env.REMOTION_LAMBDA_SERVER_URL;
-
-            if (!REGION || !FUNCTION_NAME || !SERVE_URL) {
-                throw new Error("Missing Remotion Lambda environment variables");
-            }
-
-            // Prepare props for Composition
-            // Assuming image duration 300 frames total or based on images length
-            // Using 3 seconds per image (30fps * 3 = 90 frames)
-            const fps = 30;
-            const durationInFrames = Math.floor(imageUrls.length * 3 * fps);
-
-            const inputProps = {
-                images: imageUrls,
-                captions: captionsUrl.structuredCaptions.map(c => ({
-                    text: c.word,
-                    start: c.start,
-                    end: c.end
-                })),
-                audioUrl,
-                fps,
-                durationInFrames
-            };
-
-            const { renderId, bucketName } = await renderMediaOnLambda({
-                region: REGION as any,
-                functionName: FUNCTION_NAME,
-                serveUrl: SERVE_URL,
-                composition: COMPOSITION_ID,
-                inputProps,
-                codec: 'h264',
-                framesPerLambda: 200, // Increase this to reduce concurrency and avoid rate limits
-            });
-
-            console.log(`Render started: ${renderId}`);
-            return { renderId, bucketName };
-        });
-
-        // Step 8: Wait for Lambda Completion (Polling)
-        // Note: Inngest has built-in waitForEvent or sleep, but for Lambda we poll external status
-        // We'll use a simple sleep loop pattern here or ideally just trigger it and let a webhook handle it.
-        // For "wait for lambda completed (for later)", we'll implement a basic loop.
-        const finalVideoUrl = await step.run("wait-for-render", async () => {
-            const { getRenderProgress } = await import("@remotion/lambda/client");
-            const REGION = process.env.REMOTION_LAMBDA_REGION;
-            const FUNCTION_NAME = process.env.REMOTION_LAMBDA_FUNCTION_NAME;
-
-            if (!REGION || !FUNCTION_NAME) {
-                throw new Error("Missing Remotion Lambda environment variables for polling");
-            }
-
-            let retries = 0;
-            const MAX_RETRIES = 60; // 5 minutes approx (5s interval)
-
-            while (retries < MAX_RETRIES) {
-                const progress = await getRenderProgress({
-                    renderId: renderResult.renderId,
-                    bucketName: renderResult.bucketName,
-                    functionName: FUNCTION_NAME,
-                    region: REGION as any,
-                });
-
-                if (progress.done) return progress.outputFile;
-                if (progress.fatalErrorEncountered) throw new Error(progress.errors[0].message);
-
-                // Wait 5 seconds
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                retries++;
-            }
-            throw new Error("Render timed out");
-        });
-
-        // Step 6: Save all generated assets to database
-        const saveResult = await step.run("save-result", async () => {
-            console.log("Saving generated video assets to database...");
+        // Step 6: Save intermediate assets to database
+        const videoAsset = await step.run("save-intermediate-assets", async () => {
+            console.log("Saving intermediate video assets to database...");
 
             // Get the count of existing videos for this series to determine video number
             const { count } = await supabaseAdmin
@@ -246,10 +166,8 @@ export const generateVideo = inngest.createFunction(
                     audio_url: audioUrl,
                     captions_url: captionsUrl.captionsUrl,
                     image_urls: imageUrls,
-                    render_id: renderResult.renderId,
-                    final_video_url: finalVideoUrl,
                     video_number: videoNumber,
-                    status: 'completed'
+                    status: 'rendering' // Status is rendering now
                 })
                 .select()
                 .single();
@@ -259,18 +177,132 @@ export const generateVideo = inngest.createFunction(
                 throw new Error(`Failed to save to database: ${error.message}`);
             }
 
-            // step 7Update video_generations status to completed
+            return { videoId: data.id, videoNumber };
+        });
+
+        // Step 7: Render Video using Remotion Lambda
+        const renderResult = await step.run("render-video", async () => {
+            console.log("Triggering Remotion Lambda render...");
+            const { renderMediaOnLambda } = await import("@remotion/lambda/client");
+            const { COMPOSITION_ID } = await import("@/remotion/constants");
+
+            const REGION = process.env.REMOTION_LAMBDA_REGION;
+            const FUNCTION_NAME = process.env.REMOTION_LAMBDA_FUNCTION_NAME;
+            const SERVE_URL = process.env.REMOTION_LAMBDA_SERVER_URL;
+
+            if (!REGION || !FUNCTION_NAME || !SERVE_URL) {
+                throw new Error("Missing Remotion Lambda environment variables");
+            }
+
+            // Prepare props for Composition
+            const fps = 30;
+            const durationInFrames = Math.floor(imageUrls.length * 3 * fps);
+
+            // Group captions into chunks of 3 words (or less for the last chunk)
+            const wordCaptions = captionsUrl.structuredCaptions.map(c => ({
+                text: c.word,
+                start: c.start,
+                end: c.end
+            }));
+
+            const chunkedCaptions = [];
+            for (let i = 0; i < wordCaptions.length; i += 3) {
+                const chunk = wordCaptions.slice(i, i + 3);
+                if (chunk.length > 0) {
+                    chunkedCaptions.push({
+                        text: chunk.map(c => c.text).join(" "),
+                        start: chunk[0].start,
+                        end: chunk[chunk.length - 1].end
+                    });
+                }
+            }
+
+            const inputProps = {
+                images: imageUrls,
+                captions: chunkedCaptions,
+                audioUrl,
+                fps,
+                durationInFrames
+            };
+
+            const { renderId, bucketName } = await renderMediaOnLambda({
+                region: REGION as any,
+                functionName: FUNCTION_NAME,
+                serveUrl: SERVE_URL,
+                composition: COMPOSITION_ID,
+                inputProps,
+                codec: 'h264',
+                framesPerLambda: 3000, // Set to a high value to force single-lambda rendering and avoid concurrency limits
+            });
+
+            console.log(`Render started: ${renderId}`);
+
+            // Update database with render ID immediately
+            await supabaseAdmin
+                .from('generated_video_assets')
+                .update({ render_id: renderId })
+                .eq('id', videoAsset.videoId);
+
+            return { renderId, bucketName };
+        });
+
+        // Step 8: Wait for Lambda Completion (Polling)
+        const finalVideoUrl = await step.run("wait-for-render", async () => {
+            const { getRenderProgress } = await import("@remotion/lambda/client");
+            const REGION = process.env.REMOTION_LAMBDA_REGION;
+            const FUNCTION_NAME = process.env.REMOTION_LAMBDA_FUNCTION_NAME;
+
+            if (!REGION || !FUNCTION_NAME) {
+                throw new Error("Missing Remotion Lambda environment variables for polling");
+            }
+
+            let retries = 0;
+            const MAX_RETRIES = 120; // Increased timeout to 10 mins
+
+            while (retries < MAX_RETRIES) {
+                const progress = await getRenderProgress({
+                    renderId: renderResult.renderId,
+                    bucketName: renderResult.bucketName,
+                    functionName: FUNCTION_NAME,
+                    region: REGION as any,
+                });
+
+                if (progress.done) return progress.outputFile;
+                if (progress.fatalErrorEncountered) {
+                    console.error("Render failed:", progress.errors);
+                    throw new Error(progress.errors[0].message);
+                }
+
+                console.log(`Rendering progress: ${Math.round(progress.overallProgress * 100)}%`);
+
+                // Wait 5 seconds
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                retries++;
+            }
+            throw new Error("Render timed out");
+        });
+
+        // Step 9: Finalize - Update DB with video URL
+        const finalizeResult = await step.run("finalize-video", async () => {
             const { error: updateError } = await supabaseAdmin
+                .from('generated_video_assets')
+                .update({
+                    final_video_url: finalVideoUrl,
+                    status: 'completed'
+                })
+                .eq('id', videoAsset.videoId);
+
+            if (updateError) {
+                throw new Error(`Failed to update final video url: ${updateError.message}`);
+            }
+
+            // Update series status to completed
+            await supabaseAdmin
                 .from('video_generations')
                 .update({ status: 'completed' })
                 .eq('id', seriesId);
 
-            if (updateError) {
-                console.error("Failed to update series status:", updateError);
-            }
-
-            console.log(`Video generation completed! Video #${videoNumber} saved successfully.`);
-            return { success: true, videoId: data.id, videoNumber, message: "Video assets saved successfully" };
+            return { success: true };
         });
 
         return {
