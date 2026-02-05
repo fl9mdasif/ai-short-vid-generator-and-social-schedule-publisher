@@ -91,8 +91,9 @@ export const generateVideo = inngest.createFunction(
             console.log("Generating captions from audio:", audioUrl);
 
             // Use Deepgram to transcribe audio and generate SRT captions
-            const { generateSRT } = await import("@/lib/caption-generator");
+            const { generateSRT, generateCaptions } = await import("@/lib/caption-generator");
             const srtContent = await generateSRT(audioUrl);
+            const structuredCaptions = await generateCaptions(audioUrl);
 
             // Upload SRT file to Supabase Storage
             const captionFileName = `${seriesData.id}/captions.srt`;
@@ -115,7 +116,7 @@ export const generateVideo = inngest.createFunction(
                 .getPublicUrl(captionFileName);
 
             console.log("Captions generated and uploaded successfully");
-            return publicData.publicUrl;
+            return { captionsUrl: publicData.publicUrl, structuredCaptions };
         });
 
         // Step 5: Generate Images from visual prompts using Replicate
@@ -144,6 +145,86 @@ export const generateVideo = inngest.createFunction(
             return generatedImageUrls;
         });
 
+        // Step 7: Render Video using Remotion Lambda
+        const renderResult = await step.run("render-video", async () => {
+            console.log("Triggering Remotion Lambda render...");
+            const { renderMediaOnLambda } = await import("@remotion/lambda/client");
+            const { COMPOSITION_ID } = await import("@/remotion/constants");
+
+            const REGION = process.env.REMOTION_LAMBDA_REGION;
+            const FUNCTION_NAME = process.env.REMOTION_LAMBDA_FUNCTION_NAME;
+            const SERVE_URL = process.env.REMOTION_LAMBDA_SERVER_URL;
+
+            if (!REGION || !FUNCTION_NAME || !SERVE_URL) {
+                throw new Error("Missing Remotion Lambda environment variables");
+            }
+
+            // Prepare props for Composition
+            // Assuming image duration 300 frames total or based on images length
+            // Using 3 seconds per image (30fps * 3 = 90 frames)
+            const fps = 30;
+            const durationInFrames = Math.floor(imageUrls.length * 3 * fps);
+
+            const inputProps = {
+                images: imageUrls,
+                captions: captionsUrl.structuredCaptions.map(c => ({
+                    text: c.word,
+                    start: c.start,
+                    end: c.end
+                })),
+                audioUrl,
+                fps,
+                durationInFrames
+            };
+
+            const { renderId, bucketName } = await renderMediaOnLambda({
+                region: REGION as any,
+                functionName: FUNCTION_NAME,
+                serveUrl: SERVE_URL,
+                composition: COMPOSITION_ID,
+                inputProps,
+                codec: 'h264',
+                framesPerLambda: 200, // Increase this to reduce concurrency and avoid rate limits
+            });
+
+            console.log(`Render started: ${renderId}`);
+            return { renderId, bucketName };
+        });
+
+        // Step 8: Wait for Lambda Completion (Polling)
+        // Note: Inngest has built-in waitForEvent or sleep, but for Lambda we poll external status
+        // We'll use a simple sleep loop pattern here or ideally just trigger it and let a webhook handle it.
+        // For "wait for lambda completed (for later)", we'll implement a basic loop.
+        const finalVideoUrl = await step.run("wait-for-render", async () => {
+            const { getRenderProgress } = await import("@remotion/lambda/client");
+            const REGION = process.env.REMOTION_LAMBDA_REGION;
+            const FUNCTION_NAME = process.env.REMOTION_LAMBDA_FUNCTION_NAME;
+
+            if (!REGION || !FUNCTION_NAME) {
+                throw new Error("Missing Remotion Lambda environment variables for polling");
+            }
+
+            let retries = 0;
+            const MAX_RETRIES = 60; // 5 minutes approx (5s interval)
+
+            while (retries < MAX_RETRIES) {
+                const progress = await getRenderProgress({
+                    renderId: renderResult.renderId,
+                    bucketName: renderResult.bucketName,
+                    functionName: FUNCTION_NAME,
+                    region: REGION as any,
+                });
+
+                if (progress.done) return progress.outputFile;
+                if (progress.fatalErrorEncountered) throw new Error(progress.errors[0].message);
+
+                // Wait 5 seconds
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                retries++;
+            }
+            throw new Error("Render timed out");
+        });
+
         // Step 6: Save all generated assets to database
         const saveResult = await step.run("save-result", async () => {
             console.log("Saving generated video assets to database...");
@@ -163,8 +244,10 @@ export const generateVideo = inngest.createFunction(
                     series_id: seriesId,
                     script_json: script,
                     audio_url: audioUrl,
-                    captions_url: captionsUrl,
+                    captions_url: captionsUrl.captionsUrl,
                     image_urls: imageUrls,
+                    render_id: renderResult.renderId,
+                    final_video_url: finalVideoUrl,
                     video_number: videoNumber,
                     status: 'completed'
                 })
@@ -196,8 +279,9 @@ export const generateVideo = inngest.createFunction(
             videoData: {
                 script,
                 audioUrl,
-                captionsUrl,
-                imageUrls
+                captionsUrl: captionsUrl.captionsUrl,
+                imageUrls,
+                finalVideoUrl
             }
         };
     }

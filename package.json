@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "remotion:preview": "remotion preview remotion/index.ts",
+    "remotion:deploy": "remotion lambda sites create remotion/index.ts --site-name=ai-video-generator",
+    "remotion:upgrade": "remotion upgrade"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.37.1",
@@ -21,6 +24,8 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-toast": "^1.2.15",
+    "@remotion/lambda": "^4.0.418",
+    "@remotion/player": "^4.0.418",
     "@supabase/supabase-js": "^2.93.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -31,9 +36,12 @@
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "remotion": "^4.0.418",
     "replicate": "^1.4.0",
     "shadcn-ui": "^0.9.5",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "z": "^1.0.9",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

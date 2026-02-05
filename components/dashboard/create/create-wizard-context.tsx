@@ -52,7 +52,7 @@ const CreateWizardContext = createContext<CreateWizardContextType | undefined>(u
 
 export function CreateWizardProvider({ children, initialData }: { children: ReactNode, initialData?: Partial<CreateWizardData> }) {
     const [currentStep, setCurrentStep] = useState(1);
-    const totalSteps = 6;
+    const totalSteps = 8;
     const [formData, setFormData] = useState<CreateWizardData>({
         nicheType: "available",
         selectedNiche: "",
@@ -72,6 +72,7 @@ export function CreateWizardProvider({ children, initialData }: { children: Reac
     });
     const [canGoToNextStep, setCanGoToNextStep] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [videoGenerationStatus, setVideoGenerationStatus] = useState<'idle' | 'generating' | 'completed' | 'failed'>('idle');
 
     const goToNextStep = () => {
         if (currentStep < totalSteps) {
@@ -111,7 +112,12 @@ export function CreateWizardProvider({ children, initialData }: { children: Reac
                 canGoToNextStep,
                 setCanGoToNextStep,
                 isSaving,
-                setIsSaving
+                canGoToNextStep,
+                setCanGoToNextStep,
+                isSaving,
+                setIsSaving,
+                videoGenerationStatus,
+                setVideoGenerationStatus
             }}
         >
             {children}
