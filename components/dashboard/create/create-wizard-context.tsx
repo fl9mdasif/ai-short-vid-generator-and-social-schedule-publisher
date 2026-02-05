@@ -46,13 +46,15 @@ interface CreateWizardContextType {
     setCanGoToNextStep: (canGo: boolean) => void;
     isSaving: boolean;
     setIsSaving: (isSaving: boolean) => void;
+    videoGenerationStatus: 'idle' | 'generating' | 'completed' | 'failed';
+    setVideoGenerationStatus: React.Dispatch<React.SetStateAction<'idle' | 'generating' | 'completed' | 'failed'>>;
 }
 
 const CreateWizardContext = createContext<CreateWizardContextType | undefined>(undefined);
 
 export function CreateWizardProvider({ children, initialData }: { children: ReactNode, initialData?: Partial<CreateWizardData> }) {
     const [currentStep, setCurrentStep] = useState(1);
-    const totalSteps = 8;
+    const totalSteps = 6;
     const [formData, setFormData] = useState<CreateWizardData>({
         nicheType: "available",
         selectedNiche: "",
@@ -112,9 +114,6 @@ export function CreateWizardProvider({ children, initialData }: { children: Reac
                 canGoToNextStep,
                 setCanGoToNextStep,
                 isSaving,
-                canGoToNextStep,
-                setCanGoToNextStep,
-                isSaving,
                 setIsSaving,
                 videoGenerationStatus,
                 setVideoGenerationStatus
@@ -124,6 +123,7 @@ export function CreateWizardProvider({ children, initialData }: { children: Reac
         </CreateWizardContext.Provider>
     );
 }
+
 
 export function useCreateWizard() {
     const context = useContext(CreateWizardContext);

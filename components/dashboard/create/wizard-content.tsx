@@ -9,7 +9,7 @@ import { BgMusicSelection } from "@/components/dashboard/create/steps/bg-music-s
 import { VideoStyleSelection } from "@/components/dashboard/create/steps/video-style-selection";
 import { CaptionSelection } from "@/components/dashboard/create/steps/caption-selection";
 import { SeriesDetails } from "@/components/dashboard/create/steps/series-details";
-import { Step8VideoGeneration } from "@/components/dashboard/create/steps/step-8-video-generation";
+
 import { motion, AnimatePresence } from "framer-motion";
 
 export function WizardContent() {
@@ -37,18 +37,7 @@ export function WizardContent() {
                         {currentStep === 4 && <VideoStyleSelection />}
                         {currentStep === 5 && <CaptionSelection />}
                         {currentStep === 6 && <SeriesDetails />}
-                        {currentStep === 6 && <SeriesDetails />}
-                        {currentStep === 7 && (
-                            <div className="flex flex-col items-center justify-center h-[400px] text-zinc-500">
-                                <p className="text-xl">Step 7: Content Review (Coming Soon)</p>
-                            </div>
-                        )}
-                        {currentStep === 8 && <Step8VideoGeneration />}
-                        {currentStep > 8 && (
-                            <div className="flex flex-col items-center justify-center h-[400px] text-zinc-500">
-                                <p className="text-xl">Step {currentStep} Content Placeholder</p>
-                            </div>
-                        )}
+
                     </motion.div>
                 </AnimatePresence>
             </div>

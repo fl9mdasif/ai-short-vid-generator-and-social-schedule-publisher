@@ -238,10 +238,16 @@ export const generateVideo = inngest.createFunction(
             console.log(`Render started: ${renderId}`);
 
             // Update database with render ID immediately
-            await supabaseAdmin
+            // Update database with render ID immediately
+            const { error: updateError } = await supabaseAdmin
                 .from('generated_video_assets')
                 .update({ render_id: renderId })
                 .eq('id', videoAsset.videoId);
+
+            if (updateError) {
+                console.error("Failed to update render_id:", updateError);
+                // We don't throw here to avoid stopping the render, but we log explicitly
+            }
 
             return { renderId, bucketName };
         });
