@@ -184,7 +184,7 @@ export const generateVideo = inngest.createFunction(
         });
 
         // Step 7: Render Video using Remotion Lambda
-        const renderResult = await step.run("generating-video", async () => {
+        const renderResult = await step.run("render-video", async () => {
             console.log("Triggering Remotion Lambda render...");
             const { renderMediaOnLambda } = await import("@remotion/lambda/client");
             const { COMPOSITION_ID } = await import("@/remotion/constants");
@@ -257,7 +257,7 @@ export const generateVideo = inngest.createFunction(
         });
 
         // Step 8: Wait for Lambda Completion (Polling)
-        const finalVideoUrl = await step.run("aws-lambda-polling", async () => {
+        const finalVideoUrl = await step.run("wait-for-render", async () => {
             const { getRenderProgress } = await import("@remotion/lambda/client");
             const REGION = process.env.REMOTION_LAMBDA_REGION;
             const FUNCTION_NAME = process.env.REMOTION_LAMBDA_FUNCTION_NAME;
@@ -293,7 +293,7 @@ export const generateVideo = inngest.createFunction(
         });
 
         // Step 9: Finalize - Update DB with video URL
-        const finalizeResult = await step.run("finalize-video-url", async () => {
+        const finalizeResult = await step.run("finalize-video", async () => {
             const { error: updateError } = await supabaseAdmin
                 .from('generated_video_assets')
                 .update({
