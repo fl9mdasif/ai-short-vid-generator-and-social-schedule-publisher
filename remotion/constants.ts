@@ -14,6 +14,7 @@ export const videoSchema = z.object({
     audioUrl: z.string(),
     voiceVolume: z.number().optional(),
     musicVolume: z.number().optional(),
+    styleId: z.string().optional(),
     fps: z.number(),
     durationInFrames: z.number(),
 });

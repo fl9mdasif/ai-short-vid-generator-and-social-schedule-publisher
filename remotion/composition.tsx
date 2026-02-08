@@ -14,6 +14,7 @@ export const MainComposition: React.FC<Props> = ({
     audioUrl,
     voiceVolume = 1,
     musicVolume = 0.1,
+    styleId,
 }) => {
     return (
         <AbsoluteFill className="bg-black">
@@ -21,7 +22,7 @@ export const MainComposition: React.FC<Props> = ({
             <ImageSequence images={images} />
 
             {/* Captions Layer */}
-            <Captions captions={captions} />
+            <Captions captions={captions} styleId={styleId} />
 
             {/* Audio Layer */}
             {audioUrl && (

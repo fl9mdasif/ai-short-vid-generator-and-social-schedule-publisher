@@ -2,7 +2,7 @@ import React from 'react';
 import { Composition } from 'remotion';
 import { MainComposition } from './composition';
 import { COMPOSITION_ID, videoSchema } from './constants';
-
+import "../app/globals.css";
 
 export const RemotionRoot: React.FC = () => {
     return (
@@ -23,6 +23,7 @@ export const RemotionRoot: React.FC = () => {
                     musicVolume: 0.1,
                     fps: 30,
                     durationInFrames: 30 * 10,
+                    styleId: 'minimal',
                 }}
             />
         </>

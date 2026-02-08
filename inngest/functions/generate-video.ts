@@ -3,6 +3,9 @@ import { supabaseAdmin } from "@/lib/supabase-admin";
 import { generateVideoScriptPrompt } from "@/lib/video-prompts";
 import { generateVoice } from "@/lib/voice-generator";
 import { genAI, model } from "@/lib/gemini";
+import { renderMediaOnLambda } from "@remotion/lambda/client";
+import Plunk from "@plunk/node";
+import { generateVideoEmailTemplate } from "@/lib/email-templates";
 
 export const generateVideo = inngest.createFunction(
     { id: "generate-video" },
@@ -181,7 +184,7 @@ export const generateVideo = inngest.createFunction(
         });
 
         // Step 7: Render Video using Remotion Lambda
-        const renderResult = await step.run("render-video", async () => {
+        const renderResult = await step.run("generating-video", async () => {
             console.log("Triggering Remotion Lambda render...");
             const { renderMediaOnLambda } = await import("@remotion/lambda/client");
             const { COMPOSITION_ID } = await import("@/remotion/constants");
@@ -222,7 +225,8 @@ export const generateVideo = inngest.createFunction(
                 captions: chunkedCaptions,
                 audioUrl,
                 fps,
-                durationInFrames
+                durationInFrames,
+                styleId: seriesData.caption_style
             };
 
             const { renderId, bucketName } = await renderMediaOnLambda({
@@ -253,7 +257,7 @@ export const generateVideo = inngest.createFunction(
         });
 
         // Step 8: Wait for Lambda Completion (Polling)
-        const finalVideoUrl = await step.run("wait-for-render", async () => {
+        const finalVideoUrl = await step.run("aws-lambda-polling", async () => {
             const { getRenderProgress } = await import("@remotion/lambda/client");
             const REGION = process.env.REMOTION_LAMBDA_REGION;
             const FUNCTION_NAME = process.env.REMOTION_LAMBDA_FUNCTION_NAME;
@@ -289,7 +293,7 @@ export const generateVideo = inngest.createFunction(
         });
 
         // Step 9: Finalize - Update DB with video URL
-        const finalizeResult = await step.run("finalize-video", async () => {
+        const finalizeResult = await step.run("finalize-video-url", async () => {
             const { error: updateError } = await supabaseAdmin
                 .from('generated_video_assets')
                 .update({
@@ -311,6 +315,45 @@ export const generateVideo = inngest.createFunction(
             return { success: true };
         });
 
+        // Step 10: Send Email Notification
+        await step.run("send-email-notification", async () => {
+            if (!process.env.PLUNK_API_KEY) {
+                console.warn("Skipping email notification: PLUNK_API_KEY not set");
+                return;
+            }
+
+            const plunk = new Plunk(process.env.PLUNK_API_KEY);
+
+            // Fetch user email
+            const { data: userData, error: userError } = await supabaseAdmin
+                .from("users")
+                .select("email")
+                .eq("clerk_id", seriesData.user_clerk_id)
+                .single();
+
+            if (userError || !userData?.email) {
+                console.error("Failed to fetch user email for notification:", userError);
+                return;
+            }
+
+            if (!finalVideoUrl) {
+                console.error("No final video URL available for email notification");
+                return;
+            }
+
+            const emailHtml = generateVideoEmailTemplate(
+                finalVideoUrl,
+                imageUrls[0] || "", // Use the first generated image as thumbnail, fallback to empty string
+                seriesData.series_name || "Your Generated Video"
+            );
+
+            await plunk.emails.send({
+                to: userData.email,
+                subject: "Your video is ready! 🎬",
+                body: emailHtml,
+            });
+        });
+
         return {
             seriesId,
             status: "completed",
@@ -319,8 +362,11 @@ export const generateVideo = inngest.createFunction(
                 audioUrl,
                 captionsUrl: captionsUrl.captionsUrl,
                 imageUrls,
-                finalVideoUrl
+                finalVideoUrl,
+                finalizeResult
             }
         };
     }
 );
+
+

@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from 'remotion';
+import { CaptionStyles } from '@/components/dashboard/create/data/caption-style-data';
+import { cn } from '@/lib/utils';
 
 interface CaptionSegment {
     text: string;
@@ -18,31 +20,36 @@ export const Captions: React.FC<CaptionsProps> = ({ captions, styleId }) => {
     const currentTime = frame / fps;
 
     // Find active caption segment
-    // We want to show 2-3 words. The incoming captions might be word-level or sentence-level.
-    // Assuming word-level or small phrases for now based on the prompt "Show 2 to 3 Words at a time".
-
-    // If the segments are long sentences, we would need to split them. 
-    // For this implementation, I'll assume the `captions` prop passed is already chunked mostly correctly 
-    // or we filter active words.
-
     const activeSegment = useMemo(() => {
         return captions.find(
             (c) => currentTime >= c.start && currentTime <= c.end
         );
     }, [captions, currentTime]);
 
+    // Find selected style or default to first one
+    const selectedStyle = useMemo(() => {
+        return CaptionStyles.find((s) => s.id === styleId) || CaptionStyles[0];
+    }, [styleId]);
+
     if (!activeSegment) return null;
 
     return (
         <AbsoluteFill className="flex justify-end items-center pb-24 flex-col pointer-events-none">
             <div
-                className="text-white text-4xl font-bold text-center px-8 py-4 bg-black/50 rounded-xl backdrop-blur-sm"
+                className={cn(
+                    "text-center transition-all duration-200",
+                    selectedStyle.containerClassName
+                )}
                 style={{
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
                     maxWidth: '80%',
                 }}
             >
-                {activeSegment.text}
+                <span className={cn(
+                    "whitespace-pre-wrap",
+                    selectedStyle.textClassName
+                )}>
+                    {activeSegment.text}
+                </span>
             </div>
         </AbsoluteFill>
     );
