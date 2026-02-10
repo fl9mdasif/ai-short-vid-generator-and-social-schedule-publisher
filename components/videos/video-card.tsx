@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Clock, Film, Trash2, Play } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
@@ -148,6 +148,11 @@ export function VideoCard({ video, isGenerating = false }: VideoCardProps) {
             </Card>
 
             <DialogContent className="sm:max-w-4xl p-0 bg-black border-zinc-800">
+                {/* Accessibility title (hidden) */}
+                <div className="sr-only">
+                    <DialogTitle>Video Preview</DialogTitle>
+                </div>
+
                 <div className="aspect-video w-full relative">
                     {video.final_video_url && (
                         <video

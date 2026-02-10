@@ -91,5 +91,38 @@ create index idx_generated_video_assets_series_id on generated_video_assets(seri
 -- Index for querying by creation date
 create index idx_generated_video_assets_created_at on generated_video_assets(created_at);
 
--- -- Disable RLS for trusted backend usage
+-- Disable RLS for trusted backend usage
 -- alter table generated_video_assets disable row level security;
+
+-- Create social_connections table (User requested schema)
+create table social_connections (
+  id uuid primary key default uuid_generate_v4(),
+  user_id text not null, -- Stores Clerk User ID
+  platform text not null, -- 'youtube', 'instagram', 'tiktok'
+  
+  access_token text,
+  refresh_token text,
+  expires_at timestamp with time zone,
+  
+  profile_name text,
+  profile_image text,
+  
+  created_at timestamp with time zone default now(),
+  
+  -- Prevent multiple connections of same platform for same user
+  unique(user_id, platform)
+);
+
+-- Enable RLS (though generally we use service role in actions, good practice to have)
+alter table social_connections enable row level security;
+
+-- Policy provided by user (Note: auth.uid() is Supabase Auth UUID, user_id is Clerk ID text. 
+-- Mismatch may prevent client-side access, but we use server actions with admin client usually.)
+-- create policy "Users can manage their own social connections" on social_connections for all
+-- using (auth.uid()::text = user_id); 
+-- Commented out strictly because we are not using Supabase Auth, so auth.uid() is null in this context.
+-- We will stick to server-side admin operations for now.
+
+-- Index for faster lookups
+create index idx_social_connections_user_id on social_connections(user_id);
+

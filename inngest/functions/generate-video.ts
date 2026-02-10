@@ -319,18 +319,29 @@ export const generateVideo = inngest.createFunction(
         // Step 10: Wait & Publish
         // Calculate publish time and wait if needed
         if (seriesData.publish_time) {
-            try {
-                const [hours, minutes] = seriesData.publish_time.split(':').map(Number);
-                const publishDate = new Date();
-                publishDate.setHours(hours, minutes, 0, 0);
+            const publishTimeIso = await step.run("calculate-wait-time", async () => {
+                try {
+                    const [hours, minutes] = seriesData.publish_time.split(':').map(Number);
+                    const now = new Date();
+                    const publishDate = new Date(now);
+                    publishDate.setHours(hours, minutes, 0, 0);
 
-                // If scheduled time is in the future, wait
-                if (publishDate.getTime() > Date.now()) {
-                    console.log(`Waiting until ${publishDate.toISOString()} to publish...`);
-                    await step.sleepUntil("wait-until-publish", publishDate);
+                    // If scheduled time is in the future, return it
+                    if (publishDate.getTime() > now.getTime()) {
+                        console.log(`Waiting until ${publishDate.toISOString()} to publish...`);
+                        return publishDate.toISOString();
+                    }
+
+                    console.log("Publish time is in the past, publishing immediately.");
+                    return null;
+                } catch (e) {
+                    console.error("Error parsing publish time, publishing immediately:", e);
+                    return null;
                 }
-            } catch (e) {
-                console.error("Error parsing publish time, publishing immediately:", e);
+            });
+
+            if (publishTimeIso) {
+                await step.sleepUntil("wait-until-publish", publishTimeIso);
             }
         }
 

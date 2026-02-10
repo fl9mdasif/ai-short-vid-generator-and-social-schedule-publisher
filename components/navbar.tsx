@@ -46,12 +46,12 @@ export function Navbar() {
 
                 <div className="flex items-center gap-4">
                     <SignedOut>
-                        <Link href="/sign-in">
+                        <Link href="/login">
                             <Button variant="ghost" className="hidden text-zinc-400 hover:text-white md:flex">
                                 Log in
                             </Button>
                         </Link>
-                        <Link href="/sign-up">
+                        <Link href="/signup">
                             <Button className="bg-indigo-600 font-semibold text-white hover:bg-indigo-700">
                                 Get Started
                             </Button>
