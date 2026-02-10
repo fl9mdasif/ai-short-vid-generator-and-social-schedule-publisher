@@ -1,9 +1,9 @@
 export const generateVideoEmailTemplate = (
-    videoUrl: string,
-    thumbnailUrl: string,
-    seriesName: string
+  videoUrl: string,
+  thumbnailUrl: string,
+  seriesName: string
 ) => {
-    return `
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,7 +27,7 @@ export const generateVideoEmailTemplate = (
       <img src="${thumbnailUrl}" alt="Video Thumbnail" class="thumbnail" />
     </a>
     
-    <div style="text-align: center;">
+    <div style="text-align: center;text-color: #ffffff; background-color: #00ba35ff;">
       <a href="${videoUrl}" class="button">Watch & Download Video</a>
     </div>
     
