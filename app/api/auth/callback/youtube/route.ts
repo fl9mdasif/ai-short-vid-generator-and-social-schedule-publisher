@@ -70,6 +70,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Save to Database
+        console.log(`Attempting to save YouTube connection for user ${userId}`);
         const { error: dbError } = await supabaseAdmin
             .from("social_connections")
             .upsert({
@@ -86,8 +87,10 @@ export async function GET(request: NextRequest) {
             });
 
         if (dbError) {
+            console.error("Supabase upsert error:", dbError);
             throw new Error(dbError.message);
         }
+        console.log("Successfully saved YouTube connection");
 
         return NextResponse.redirect(new URL("/dashboard/settings?success=youtube_connected", request.url));
 

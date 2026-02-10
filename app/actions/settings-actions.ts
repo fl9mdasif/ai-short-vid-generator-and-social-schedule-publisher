@@ -25,7 +25,12 @@ export async function getSocialAccounts() {
             .select("*")
             .eq("user_id", userId);
 
-        if (error) throw new Error(error.message);
+        if (error) {
+            console.error("Supabase error fetching social accounts:", error);
+            throw new Error(error.message);
+        }
+
+        console.log(`Fetched ${data?.length} social accounts for user ${userId}`);
 
         // Map database fields to SocialAccount interface
         const accounts: SocialAccount[] = (data || []).map((conn: any) => ({

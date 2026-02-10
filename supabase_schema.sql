@@ -95,9 +95,12 @@ create index idx_generated_video_assets_created_at on generated_video_assets(cre
 -- alter table generated_video_assets disable row level security;
 
 -- Create social_connections table (User requested schema)
+-- Drop if exists to ensure clean state matching request
+drop table if exists social_connections;
+
 create table social_connections (
   id uuid primary key default uuid_generate_v4(),
-  user_id text not null, -- Stores Clerk User ID
+  user_id text not null,
   platform text not null, -- 'youtube', 'instagram', 'tiktok'
   
   access_token text,
@@ -113,15 +116,13 @@ create table social_connections (
   unique(user_id, platform)
 );
 
--- Enable RLS (though generally we use service role in actions, good practice to have)
+-- Enable RLS
 alter table social_connections enable row level security;
 
--- Policy provided by user (Note: auth.uid() is Supabase Auth UUID, user_id is Clerk ID text. 
--- Mismatch may prevent client-side access, but we use server actions with admin client usually.)
--- create policy "Users can manage their own social connections" on social_connections for all
--- using (auth.uid()::text = user_id); 
--- Commented out strictly because we are not using Supabase Auth, so auth.uid() is null in this context.
--- We will stick to server-side admin operations for now.
+-- Policy provided by user (casted to text to match user_id type)
+create policy "Users can manage their own social connections" on social_connections
+  for all
+  using (auth.uid()::text = user_id);
 
 -- Index for faster lookups
 create index idx_social_connections_user_id on social_connections(user_id);
