@@ -16,6 +16,8 @@ import { MoreVertical, Play, Pause, Trash2, Edit, Video, Zap, Youtube, Instagram
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
+import { executeVideoWorkflow } from "@/app/actions/generate-video-action";
+
 import { deleteSeries, toggleSeriesStatus } from "@/app/actions/dashboard-actions";
 import { triggerVideoGeneration } from "@/app/actions/generate-video-action";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +33,7 @@ export function SeriesCard({ series }: SeriesCardProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isTesting, setIsTesting] = useState(false);
 
     // Find style image
     const videoStyle = VideoStyles.find(
@@ -100,6 +103,25 @@ export function SeriesCard({ series }: SeriesCardProps) {
             toast({
                 title: "Error",
                 description: "Failed to start generation: " + result.error,
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleTestWorkflow = async () => {
+        setIsTesting(true);
+        const result = await executeVideoWorkflow(series.id);
+        setIsTesting(false);
+
+        if (result.success) {
+            toast({
+                title: "Workflow Started",
+                description: "Test workflow (Generate -> Wait -> Publish) has been queued.",
+            });
+        } else {
+            toast({
+                title: "Error",
+                description: "Failed to start workflow: " + result.error,
                 variant: "destructive",
             });
         }
@@ -204,9 +226,20 @@ export function SeriesCard({ series }: SeriesCardProps) {
 
                 {/* Footer Actions */}
                 <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-zinc-100">
-                    <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => toast({ description: "View videos coming soon" })}>
-                        <Video className="mr-2 h-3.5 w-3.5" />
-                        Permissions
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs"
+                        onClick={handleTestWorkflow}
+                        disabled={isTesting}
+                        title="Test Schedule Workflow"
+                    >
+                        {isTesting ? (
+                            <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                            <Play className="mr-2 h-3.5 w-3.5" />
+                        )}
+                        Test
                     </Button>
                     <Button
                         size="sm"

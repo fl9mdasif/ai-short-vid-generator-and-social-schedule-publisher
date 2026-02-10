@@ -315,43 +315,85 @@ export const generateVideo = inngest.createFunction(
             return { success: true };
         });
 
-        // Step 10: Send Email Notification
-        await step.run("send-email-notification", async () => {
-            if (!process.env.PLUNK_API_KEY) {
+
+        // Step 10: Wait & Publish
+        // Calculate publish time and wait if needed
+        if (seriesData.publish_time) {
+            try {
+                const [hours, minutes] = seriesData.publish_time.split(':').map(Number);
+                const publishDate = new Date();
+                publishDate.setHours(hours, minutes, 0, 0);
+
+                // If scheduled time is in the future, wait
+                if (publishDate.getTime() > Date.now()) {
+                    console.log(`Waiting until ${publishDate.toISOString()} to publish...`);
+                    await step.sleepUntil("wait-until-publish", publishDate);
+                }
+            } catch (e) {
+                console.error("Error parsing publish time, publishing immediately:", e);
+            }
+        }
+
+        // Publish to Platforms
+        await step.run("publish-video-into-social", async () => {
+            console.log("Starting publishing process...");
+
+            // 1. Email Notification
+            if (process.env.PLUNK_API_KEY) {
+                const plunk = new Plunk(process.env.PLUNK_API_KEY);
+
+                // Fetch user email
+                const { data: userData, error: userError } = await supabaseAdmin
+                    .from("users")
+                    .select("email")
+                    .eq("clerk_id", seriesData.user_clerk_id)
+                    .single();
+
+                if (userError || !userData?.email) {
+                    console.error("Failed to fetch user email for notification:", userError);
+                } else if (!finalVideoUrl) {
+                    console.error("No final video URL available for email notification");
+                } else {
+                    const emailHtml = generateVideoEmailTemplate(
+                        finalVideoUrl,
+                        imageUrls[0] || "",
+                        seriesData.series_name || "Your Generated Video"
+                    );
+
+                    await plunk.emails.send({
+                        to: userData.email,
+                        subject: "Your video is ready! 🎬",
+                        body: emailHtml,
+                    });
+                    console.log("Email notification sent.");
+                }
+            } else {
                 console.warn("Skipping email notification: PLUNK_API_KEY not set");
-                return;
             }
 
-            const plunk = new Plunk(process.env.PLUNK_API_KEY);
-
-            // Fetch user email
-            const { data: userData, error: userError } = await supabaseAdmin
-                .from("users")
-                .select("email")
-                .eq("clerk_id", seriesData.user_clerk_id)
-                .single();
-
-            if (userError || !userData?.email) {
-                console.error("Failed to fetch user email for notification:", userError);
-                return;
+            // 2. YouTube (Placeholder)
+            if (seriesData.platform?.includes('youtube')) {
+                console.log(`[MOCK] Publishing to YouTube: ${seriesData.series_name}`);
+                // TODO: Implement YouTube API upload
             }
 
-            if (!finalVideoUrl) {
-                console.error("No final video URL available for email notification");
-                return;
+            // 3. Instagram (Placeholder)
+            if (seriesData.platform?.includes('instagram')) {
+                console.log(`[MOCK] Publishing to Instagram: ${seriesData.series_name}`);
+                // TODO: Implement Instagram Graph API upload
             }
 
-            const emailHtml = generateVideoEmailTemplate(
-                finalVideoUrl,
-                imageUrls[0] || "", // Use the first generated image as thumbnail, fallback to empty string
-                seriesData.series_name || "Your Generated Video"
-            );
+            // 4. TikTok (Placeholder)
+            if (seriesData.platform?.includes('tiktok')) {
+                console.log(`[MOCK] Publishing to TikTok: ${seriesData.series_name}`);
+                // TODO: Implement TikTok API upload
+            }
 
-            await plunk.emails.send({
-                to: userData.email,
-                subject: "Your video is ready! 🎬",
-                body: emailHtml,
-            });
+            // 5. Facebook (Placeholder)
+            if (seriesData.platform?.includes('facebook')) {
+                console.log(`[MOCK] Publishing to Facebook: ${seriesData.series_name}`);
+                // TODO: Implement Facebook API upload
+            }
         });
 
         return {
