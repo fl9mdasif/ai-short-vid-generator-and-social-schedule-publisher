@@ -176,7 +176,7 @@ export const generateVideo = inngest.createFunction(
                 throw new Error(`Failed to save to database: ${error.message}`);
             }
 
-            // Update video_generations status to completed
+            // step 7Update video_generations status to completed
             const { error: updateError } = await supabaseAdmin
                 .from('video_generations')
                 .update({ status: 'completed' })

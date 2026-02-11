@@ -84,8 +84,8 @@ export function SeriesCard({ series }: SeriesCardProps) {
     const handleGenerate = async () => {
         setIsGenerating(true);
 
-        // Navigate to videos page immediately
-        router.push('/dashboard/videos');
+        // Navigate to videos page with generating query param
+        router.push(`/dashboard/videos?generating=${series.id}`);
 
         // Trigger generation in background
         const result = await triggerVideoGeneration(series.id);
