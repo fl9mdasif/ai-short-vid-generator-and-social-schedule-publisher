@@ -3,6 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Play, Sparkles, Calendar, Zap, Video, Mic } from "lucide-react";
+import Link from "next/link";
+
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 export function Hero() {
     return (
@@ -52,37 +60,35 @@ export function Hero() {
                         className="mt-10 flex flex-col gap-4 sm:flex-row"
                     >
                         <Button size="lg" className="h-12 bg-indigo-600 px-8 text-lg font-semibold hover:bg-indigo-700">
-                            Start Generating Free
+                            <Link href="/dashboard">Start Generating Free</Link>
                         </Button>
-                        <Button size="lg" variant="outline" className="h-12 border-zinc-800 bg-zinc-900/50 px-8 text-lg font-semibold text-white hover:bg-zinc-800">
-                            <Play className="mr-2 h-5 w-5 fill-white" /> Watch Demo
-                        </Button>
+
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button size="lg" variant="outline" className="h-12 border-zinc-800 bg-zinc-900/50 px-8 text-lg font-semibold text-white hover:bg-zinc-800">
+                                    <Play className="mr-2 h-5 w-5 fill-white" /> Watch Demo
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="sm:max-w-[800px] p-0 border-zinc-800 bg-black overflow-hidden">
+                                <DialogTitle className="sr-only">Product Demo Video</DialogTitle>
+                                <div className="aspect-video w-full">
+                                    <iframe
+                                        width="100%"
+                                        height="100%"
+                                        src="https://www.youtube.com/embed/PXZi9plZ4iY?autoplay=1"
+
+                                        title="Product Demo"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        className="w-full h-full"
+                                    />
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
-                        className="relative mt-20 w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/50 p-2 shadow-2xl backdrop-blur-sm"
-                    >
-                        <div className="aspect-video w-full rounded-xl bg-gradient-to-br from-indigo-900/20 to-black p-8 flex items-center justify-center border border-white/5">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full">
-                                {[
-                                    { icon: Zap, label: "AI Generation", color: "text-yellow-400" },
-                                    { icon: Calendar, label: "Auto Scheduler", color: "text-green-400" },
-                                    { icon: Sparkles, label: "Smart Captions", color: "text-blue-400" },
-                                    { icon: Video, label: "HD Export", color: "text-indigo-400" }, {
-                                        icon: Mic, label: "AI Voice Over", color: "text-red-400"
-                                    }
-                                ].map((item, i) => (
-                                    <div key={i} className="flex flex-col items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/5">
-                                        <item.icon className={`h-8 w-8 ${item.color}`} />
-                                        <span className="text-zinc-300 font-medium text-sm">{item.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </motion.div>
+
                 </div>
             </div>
         </section>

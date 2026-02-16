@@ -22,16 +22,11 @@ export function Footer() {
                             Automate your growth across all major social networks.
                         </p>
                         <div className="flex gap-4">
-                            <Link href="#" className="h-10 w-10 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-white/5">
-                                <Twitter className="h-5 w-5" />
-                            </Link>
-                            <Link href="#" className="h-10 w-10 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-white/5">
-                                <Instagram className="h-5 w-5" />
-                            </Link>
-                            <Link href="#" className="h-10 w-10 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-white/5">
+
+                            <Link href="https://www.linkedin.com/in/fl9mdasif/" className="h-10 w-10 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-white/5">
                                 <Linkedin className="h-5 w-5" />
                             </Link>
-                            <Link href="#" className="h-10 w-10 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-white/5">
+                            <Link href="https://github.com/fl9mdasif" className="h-10 w-10 rounded-full bg-zinc-900 flex items-center justify-center text-zinc-400 hover:text-white transition-colors border border-white/5">
                                 <Github className="h-5 w-5" />
                             </Link>
                         </div>
@@ -43,7 +38,7 @@ export function Footer() {
                             <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">AI Generator</Link></li>
                             <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Scheduler</Link></li>
                             <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Templates</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">API Access</Link></li>
+                            <li><Link href="" className="text-zinc-400 disabled:hover:text-indigo-500 transition-colors">API Access</Link></li>
                         </ul>
                     </div>
 
@@ -53,16 +48,16 @@ export function Footer() {
                             <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Case Studies</Link></li>
                             <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Blog</Link></li>
                             <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Documentation</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Pricing</Link></li>
+                            {/* <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Pricing</Link></li> */}
                         </ul>
                     </div>
 
                     <div>
                         <h4 className="text-white font-bold mb-6">Legal</h4>
                         <ul className="space-y-4">
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Privacy Policy</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Terms of Service</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Cookie Policy</Link></li>
+                            <li><Link href="/privacy-policy" className="text-zinc-400 hover:text-indigo-500 transition-colors">Privacy Policy</Link></li>
+                            <li><Link href="/terms-of-service" className="text-zinc-400 hover:text-indigo-500 transition-colors">Terms of Service</Link></li>
+                            {/* <li><Link href="/cookie-policy" className="text-zinc-400 hover:text-indigo-500 transition-colors">Cookie Policy</Link></li> */}
                         </ul>
                     </div>
                 </div>
@@ -74,7 +69,7 @@ export function Footer() {
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-2 text-zinc-500 text-sm">
                             <Mail className="h-4 w-4" />
-                            <span>support@vidmaxx.ai</span>
+                            <span>asifalazad.fullstack@gmail.com</span>
                         </div>
                         <div className="flex items-center gap-2 text-zinc-500 text-sm">
                             <div className="h-2 w-2 rounded-full bg-green-500" />
