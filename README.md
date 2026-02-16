@@ -59,7 +59,7 @@
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/ai-video-generator.git
+    git clone https://github.com/fl9mdasif/ai-short-vid-generator-and-social-schedule-publisher.git
     ```
 
 2.  **Install dependencies**:
@@ -81,6 +81,10 @@
     - Inngest (INNGEST_EVENT_KEY, INNGEST_SIGNING_KEY)
     - Plunk (PLUNK_API_KEY)
     - AWS (for Remotion Lambda)
+
+    Create a `.env` file and add your keys for:
+    - REMOTION_AWS_SECRET_ACCESS_KEY
+    - REMOTION_AWS_ACCESS_KEY_ID
 
 4.  **Run the development server**:
     ```bash
