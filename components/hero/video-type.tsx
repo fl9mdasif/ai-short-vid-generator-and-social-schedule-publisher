@@ -41,7 +41,7 @@ const capabilities = [
 
 export function VideoType() {
     return (
-        <section id="features" className="py-24 bg-black">
+        <section id="platforms" className="py-24 bg-black scroll-mt-20">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl font-bold tracking-tighter text-white sm:text-5xl">
@@ -54,7 +54,7 @@ export function VideoType() {
 
 
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-indigo-600/5 p-8 md:p-12 rounded-3xl border border-indigo-500/10">
+                <div className="mb-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-indigo-600/5 p-8 md:p-12 rounded-3xl border border-indigo-500/10">
                     <div>
                         <h3 className="text-2xl font-bold text-white mb-6 md:text-3xl">
                             Advanced Scheduling & <br /> AI Generation

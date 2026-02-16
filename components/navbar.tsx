@@ -25,23 +25,29 @@ export function Navbar() {
 
                 <nav className="hidden items-center gap-8 md:flex">
                     <Link
-                        href="#features"
+                        href="/#features"
                         className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
                     >
                         Features
                     </Link>
+                    {/* <Link
+                        href="/dashboard/guides"
+                        className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
+                    >
+                        Guide
+                    </Link> */}
                     <Link
-                        href="#platforms"
+                        href="/#platforms"
                         className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
                     >
                         Platforms
                     </Link>
-                    <Link
+                    {/* <Link
                         href="#pricing"
                         className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
                     >
                         Pricing
-                    </Link>
+                    </Link> */}
                 </nav>
 
                 <div className="flex items-center gap-4">
