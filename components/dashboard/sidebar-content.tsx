@@ -21,7 +21,7 @@ const sidebarLinks = [
     { name: "Series", href: "/dashboard", icon: LayoutGrid },
     { name: "Videos", href: "/dashboard/videos", icon: Video },
     { name: "Guides", href: "/dashboard/guides", icon: BookOpen },
-    { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
+    // { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
@@ -94,15 +94,15 @@ export function SidebarContent({ className, onClick, hasReachedLimit = false, pl
                 {/* Footer Options */}
                 <div className="space-y-2 border-t pt-6">
                     <Link
-                        href="/dashboard/upgrade"
+                        href="/dashboard/billing"
                         onClick={onClick}
                         className="flex items-center gap-3 rounded-lg px-4 py-3.5 text-base font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
                     >
                         <ArrowUpCircle className="h-6 w-6 text-amber-500" />
-                        Upgrade Plan
+                        Billing & Upgrade Plan
                     </Link>
                     <Link
-                        href="/user-profile"
+                        href="/dashboard/user-profile"
                         onClick={onClick}
                         className="flex items-center gap-3 rounded-lg px-4 py-3.5 text-base font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
                     >

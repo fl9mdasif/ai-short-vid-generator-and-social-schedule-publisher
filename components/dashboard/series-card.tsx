@@ -88,7 +88,7 @@ export function SeriesCard({ series }: SeriesCardProps) {
         setIsGenerating(true);
 
         // Navigate to videos page with generating query param
-        router.push(`/dashboard/videos?generating=${series.id}`);
+        router.push(`/dashboard/videos?generating=${series.id}&ts=${Date.now()}`);
 
         // Trigger generation in background
         const result = await triggerVideoGeneration(series.id);
@@ -226,21 +226,6 @@ export function SeriesCard({ series }: SeriesCardProps) {
 
                 {/* Footer Actions */}
                 <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-zinc-100">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full text-xs"
-                        onClick={handleTestWorkflow}
-                        disabled={isTesting}
-                        title="Test Schedule Workflow"
-                    >
-                        {isTesting ? (
-                            <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                            <Play className="mr-2 h-3.5 w-3.5" />
-                        )}
-                        Test
-                    </Button>
                     <Button
                         size="sm"
                         className="w-full text-xs bg-indigo-600 hover:bg-indigo-700 text-white"

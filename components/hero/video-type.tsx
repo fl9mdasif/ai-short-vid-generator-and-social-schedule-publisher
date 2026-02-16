@@ -39,7 +39,7 @@ const capabilities = [
     "Multi-Language Support",
 ];
 
-export function Features() {
+export function VideoType() {
     return (
         <section id="features" className="py-24 bg-black">
             <div className="container mx-auto px-4 md:px-6">
@@ -52,26 +52,7 @@ export function Features() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
-                    {features.map((feature, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1 }}
-                            viewport={{ once: true }}
-                            className="group relative p-8 rounded-2xl border border-white/5 bg-zinc-900/50 hover:bg-zinc-900 transition-all hover:border-indigo-500/30"
-                        >
-                            <div className={`mb-4 inline-flex p-3 rounded-lg ${feature.color}`}>
-                                <feature.icon className="h-6 w-6" />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
-                            <p className="text-zinc-400 leading-relaxed text-sm">
-                                {feature.description}
-                            </p>
-                        </motion.div>
-                    ))}
-                </div>
+
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center bg-indigo-600/5 p-8 md:p-12 rounded-3xl border border-indigo-500/10">
                     <div>
@@ -127,6 +108,27 @@ export function Features() {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+                    {features.map((feature, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            viewport={{ once: true }}
+                            className="group relative p-8 rounded-2xl border border-white/5 bg-zinc-900/50 hover:bg-zinc-900 transition-all hover:border-indigo-500/30"
+                        >
+                            <div className={`mb-4 inline-flex p-3 rounded-lg ${feature.color}`}>
+                                <feature.icon className="h-6 w-6" />
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+                            <p className="text-zinc-400 leading-relaxed text-sm">
+                                {feature.description}
+                            </p>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
         </section>

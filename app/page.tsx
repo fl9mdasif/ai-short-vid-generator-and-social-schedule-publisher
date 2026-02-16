@@ -1,7 +1,8 @@
 import { Navbar } from "@/components/navbar";
-import { Hero } from "@/components/hero";
-import { Features } from "@/components/features";
+import { Hero } from "@/components/hero/hero";
 import { Footer } from "@/components/footer";
+import { VideoType } from "@/components/hero/video-type";
+import { Features } from "@/components/hero/features";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
         <Hero />
         <Features />
         {/* Additional sections can be added here (Pricing, Testimonials, FAQ) */}
+        <VideoType />
       </main>
       <Footer />
     </div>

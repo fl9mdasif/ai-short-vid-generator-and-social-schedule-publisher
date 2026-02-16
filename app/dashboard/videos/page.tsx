@@ -10,6 +10,7 @@ export default function VideosPage() {
     const { user } = useUser();
     const searchParams = useSearchParams();
     const generatingSeriesId = searchParams.get("generating");
+    const generationTimestamp = searchParams.get("ts") ? parseInt(searchParams.get("ts")!) : 0;
 
     const [videos, setVideos] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -21,8 +22,12 @@ export default function VideosPage() {
             const data = await getVideos(user.id);
             setVideos(data);
 
-            // If we find a video for the generating series, hide the placeholder
-            if (generatingSeriesId && data.some(v => v.series_id === generatingSeriesId)) {
+            // If we find a new video for the generating series, hide the placeholder
+            // A video is "new" if it was created AFTER the generation button was clicked
+            if (generatingSeriesId && data.some(v =>
+                v.series_id === generatingSeriesId &&
+                new Date(v.created_at).getTime() > generationTimestamp
+            )) {
                 setShowGenerating(false);
             }
         } catch (error) {
