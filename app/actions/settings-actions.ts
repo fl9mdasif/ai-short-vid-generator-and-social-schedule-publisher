@@ -75,8 +75,23 @@ export async function initiateYoutubeAuth() {
     redirect(url);
 }
 
+import { getUserPlan, PLAN_LIMITS } from "@/lib/plan-limits";
+
 // Keep mock connect for other platforms for now until implemented
 export async function connectSocialAccount(platform: SocialPlatform) {
+    const { userId } = await auth();
+    if (!userId) return { success: false, error: "Unauthorized" };
+
+    const userPlan = await getUserPlan(userId);
+    const allowedPlatforms = PLAN_LIMITS[userPlan].allowedPlatforms;
+
+    if (!allowedPlatforms.includes(platform)) {
+        return {
+            success: false,
+            error: `Your ${userPlan} plan does not support connecting to ${platform}. Please upgrade to Unlimited.`
+        };
+    }
+
     if (platform === 'youtube') {
         return await initiateYoutubeAuth();
     }

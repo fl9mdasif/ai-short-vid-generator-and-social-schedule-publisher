@@ -4,12 +4,39 @@ import { auth } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { CreateWizardData } from "@/components/dashboard/create/create-wizard-context";
 
+import { getUserPlan, PLAN_LIMITS } from "@/lib/plan-limits";
+
 export async function saveWizardData(data: CreateWizardData) {
     try {
         const { userId } = await auth();
 
         if (!userId) {
             return { success: false, error: "Unauthorized" };
+        }
+
+        // Check limits only when creating a new series (not updating)
+        if (!data.id) {
+            const userPlan = await getUserPlan(userId);
+            const limits = PLAN_LIMITS[userPlan];
+
+            if (limits.maxSeries < Infinity) {
+                const { count, error: countError } = await supabaseAdmin
+                    .from("video_generations")
+                    .select("*", { count: "exact", head: true })
+                    .eq("user_clerk_id", userId);
+
+                if (countError) {
+                    console.error("Error counting user series:", countError);
+                    return { success: false, error: "Failed to validate plan limits" };
+                }
+
+                if ((count || 0) >= limits.maxSeries) {
+                    return {
+                        success: false,
+                        error: `Plan limit reached. Your ${userPlan} plan allows a maximum of ${limits.maxSeries} series. Please upgrade to create more.`
+                    };
+                }
+            }
         }
 
         // Prepare data for insertion matching the SQL schema
