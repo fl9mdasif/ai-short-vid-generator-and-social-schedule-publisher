@@ -12,7 +12,7 @@ export async function syncUser() {
             return { success: false, message: "No user found" };
         }
 
-        console.log("Syncing user:", user.emailAddresses[0].emailAddress);
+        // console.log("Syncing user:", user.emailAddresses[0].emailAddress);
 
         const { data: existingUser, error: fetchError } = await supabaseAdmin
             .from("users")

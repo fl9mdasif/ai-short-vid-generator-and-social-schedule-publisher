@@ -41,7 +41,7 @@ export async function getUserSeries() {
             return { success: false, error: "Unauthorized" };
         }
 
-        console.log("[Dashboard] Fetching series for user:", userId);
+        // console.log("[Dashboard] Fetching series for user:", userId);
 
         const { data, error } = await supabaseAdmin
             .from("video_generations")
@@ -54,7 +54,7 @@ export async function getUserSeries() {
             return { success: false, error: error.message };
         }
 
-        console.log("[Dashboard] Found", data?.length || 0, "series for user:", userId);
+        // console.log("[Dashboard] Found", data?.length || 0, "series for user:", userId);
 
         return { success: true, data: data as VideoSeries[] };
     } catch (error) {
@@ -134,7 +134,7 @@ export async function toggleSeriesStatus(id: string, currentStatus: string) {
         revalidatePath("/dashboard");
         return { success: true, newStatus };
     } catch (error) {
-        console.error("Unexpected error updating series status:", error);
+        // console.error("Unexpected error updating series status:", error);
         return { success: false, error: "Unexpected error" };
     }
 }

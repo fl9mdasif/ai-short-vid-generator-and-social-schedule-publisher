@@ -2,7 +2,7 @@ import { Sidebar } from "@/components/dashboard/sidebar";
 import { Header } from "@/components/dashboard/header";
 import { currentUser } from "@clerk/nextjs/server";
 import { getUserSeries } from "@/app/actions/dashboard-actions";
-import { getUserPlan, PLAN_LIMITS } from "@/lib/plan-limits";
+import { getUserPlan, PLAN_LIMITS, PlanType } from "@/lib/plan-limits";
 
 export default async function DashboardLayout({
     children,
@@ -11,7 +11,7 @@ export default async function DashboardLayout({
 }) {
     const user = await currentUser();
     let hasReachedLimit = false;
-    let userPlan = "Free";
+    let userPlan: PlanType = "Free";
     let limit = 1;
 
     if (user) {
