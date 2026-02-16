@@ -5,7 +5,13 @@ import { MobileSidebar } from "./mobile-sidebar";
 import { useState } from "react";
 import { Menu } from "lucide-react";
 
-export function Header() {
+interface HeaderProps {
+    hasReachedLimit?: boolean;
+    planName?: string;
+    maxSeries?: number;
+}
+
+export function Header({ hasReachedLimit = false, planName = "Free", maxSeries = 1 }: HeaderProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
@@ -34,6 +40,9 @@ export function Header() {
             <MobileSidebar
                 isOpen={isMobileMenuOpen}
                 onClose={() => setIsMobileMenuOpen(false)}
+                hasReachedLimit={hasReachedLimit}
+                planName={planName}
+                maxSeries={maxSeries}
             />
         </header>
     );

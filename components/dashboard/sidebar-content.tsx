@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { CreateSeriesButton } from "@/components/dashboard/create-series-button";
 
 const sidebarLinks = [
     { name: "Series", href: "/dashboard", icon: LayoutGrid },
@@ -27,9 +28,12 @@ const sidebarLinks = [
 interface SidebarContentProps {
     className?: string;
     onClick?: () => void; // Optional click handler for mobile close
+    hasReachedLimit?: boolean;
+    planName?: string;
+    maxSeries?: number;
 }
 
-export function SidebarContent({ className, onClick }: SidebarContentProps) {
+export function SidebarContent({ className, onClick, hasReachedLimit = false, planName = "Free", maxSeries = 1 }: SidebarContentProps) {
     const pathname = usePathname();
 
     return (
@@ -54,12 +58,14 @@ export function SidebarContent({ className, onClick }: SidebarContentProps) {
             <div className="flex flex-1 flex-col justify-between px-4 py-6 overflow-y-auto">
                 <div className="space-y-6">
                     {/* Create New Series Button */}
-                    <Link href="/dashboard/create" onClick={onClick}>
-                        <Button className="mb-6 mt-2 w-full justify-start gap-2 h-12 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all hover:scale-[1.02]">
-                            <Plus className="h-5 w-5" />
-                            Create New Series
-                        </Button>
-                    </Link>
+                    <div onClick={onClick}>
+                        <CreateSeriesButton
+                            hasReachedLimit={hasReachedLimit}
+                            planName={planName}
+                            maxSeries={maxSeries}
+                            className="mb-6 mt-2 w-full justify-start gap-2 h-12 text-base font-semibold bg-indigo-600 hover:bg-indigo-700 shadow-md transition-all hover:scale-[1.02]"
+                        />
+                    </div>
 
                     {/* Navigation Links */}
                     <nav className="space-y-2">

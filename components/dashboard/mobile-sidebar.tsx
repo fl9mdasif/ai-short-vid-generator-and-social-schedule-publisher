@@ -15,9 +15,12 @@ import { useEffect } from "react";
 interface MobileSidebarProps {
     isOpen: boolean;
     onClose: () => void;
+    hasReachedLimit?: boolean;
+    planName?: string;
+    maxSeries?: number;
 }
 
-export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
+export function MobileSidebar({ isOpen, onClose, hasReachedLimit = false, planName = "Free", maxSeries = 1 }: MobileSidebarProps) {
     // Lock body scroll when open
     useEffect(() => {
         if (isOpen) {
@@ -59,7 +62,12 @@ export function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                                 <X className="h-5 w-5" />
                             </button>
                         </div>
-                        <SidebarContent onClick={onClose} />
+                        <SidebarContent
+                            onClick={onClose}
+                            hasReachedLimit={hasReachedLimit}
+                            planName={planName}
+                            maxSeries={maxSeries}
+                        />
                     </motion.div>
                 </>
             )}

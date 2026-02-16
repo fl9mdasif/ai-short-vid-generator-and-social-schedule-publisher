@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ShieldCheck, Clock } from "lucide-react";
+import { Check, ShieldCheck, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -12,27 +12,29 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-import { useUser } from "@clerk/nextjs";
-
+import { useUser, useClerk } from "@clerk/nextjs";
+import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { useRouter } from "next/navigation";
+import { SyncSubscriptionButton } from "@/components/dashboard/billing/sync-subscription-button";
 
 export default function BillingPage() {
-    const { user } = useUser();
-    const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-    const [isUpgradeOpen, setIsUpgradeOpen] = useState(false);
+    const { user, isLoaded } = useUser();
+    const { openUserProfile } = useClerk();
+    const { toast } = useToast();
+    const router = useRouter();
 
-    // Mock data - in a real app, fetch this from your backend/Stripe/Clerk
-    const currentPlan: string = "Free"; // "Free", "Basic", "Unlimited"
+    // Get current plan from Clerk metadata, defaulting to "Free"
+    const currentPlan = (user?.publicMetadata?.plan as string) || "Free";
     const nextBillingDate = "Feb 26, 2026";
+
+    // Replaced simulated upgrade with Clerk User Profile opening
+    const handleUpgrade = () => {
+        // In a real production app with Stripe, you might redirect to a specific payment link:
+        // window.location.href = "https://buy.stripe.com/..."
+        // For Clerk Hosted Billing, we open the profile:
+        openUserProfile();
+    };
 
     const plans = [
         {
@@ -40,7 +42,7 @@ export default function BillingPage() {
             price: "$0",
             description: "For hobbyists",
             features: [
-                "2 Series Maximum",
+                "1 Series Maximum",
                 "Email & YouTube Only",
                 "Standard Generation Speed",
                 "720p Video Quality"
@@ -53,7 +55,7 @@ export default function BillingPage() {
             price: "$15", // Placeholder price
             description: "For creators starting out",
             features: [
-                "4 Series Maximum",
+                "3 Series Maximum",
                 "Email & YouTube Only",
                 "Faster Generation",
                 "1080p Video Quality"
@@ -77,15 +79,24 @@ export default function BillingPage() {
         },
     ];
 
+    if (!isLoaded) {
+        return <div className="p-8 flex justify-center"><Loader2 className="animate-spin h-8 w-8 text-zinc-400" /></div>;
+    }
+
     return (
         <div className="space-y-8 pb-10">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-zinc-900 flex items-center gap-2">
-                    Billing & Subscription
-                </h1>
-                <p className="text-muted-foreground mt-2 max-w-2xl">
-                    Manage your plan, subscription, and billing history. Upgrade your plan to unlock more generations and premium features for <span className="font-medium text-zinc-900">{user?.primaryEmailAddress?.emailAddress}</span>.
-                </p>
+                <div className="flex items-start justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 flex items-center gap-2">
+                            Billing & Subscription
+                        </h1>
+                        <p className="text-muted-foreground mt-2 max-w-2xl">
+                            Manage your plan, subscription, and billing history. Upgrade your plan to unlock more generations and premium features for <span className="font-medium text-zinc-900">{user?.primaryEmailAddress?.emailAddress}</span>.
+                        </p>
+                    </div>
+                    <SyncSubscriptionButton />
+                </div>
             </div>
 
             {/* Top Status Cards */}
@@ -94,10 +105,13 @@ export default function BillingPage() {
                 <Card>
                     <CardHeader className="pb-2">
                         <div className="text-xs font-semibold uppercase text-indigo-600 tracking-wider mb-1">Current Plan</div>
-                        <CardTitle className="text-2xl font-bold">Free Tier</CardTitle>
+                        <CardTitle className="text-2xl font-bold">{currentPlan} Tier</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold mb-2">$0<span className="text-sm font-normal text-muted-foreground">/month</span></div>
+                        <div className="text-3xl font-bold mb-2">
+                            {plans.find(p => p.name === currentPlan)?.price || "$0"}
+                            <span className="text-sm font-normal text-muted-foreground">/month</span>
+                        </div>
                         <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
                             <div className="bg-indigo-600 h-full w-1/3"></div>
                         </div>
@@ -165,8 +179,8 @@ export default function BillingPage() {
                             <div className="flex items-center justify-between">
                                 <CardTitle className="text-xl font-bold">{plan.name}</CardTitle>
                                 {plan.current && (
-                                    <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-100">
-                                        Current
+                                    <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-100">
+                                        Active
                                     </Badge>
                                 )}
                             </div>
@@ -193,21 +207,18 @@ export default function BillingPage() {
                                 <Button
                                     className="w-full h-11 text-base font-semibold bg-white text-zinc-900 border border-zinc-200"
                                     variant="outline"
-                                    disabled
+                                    onClick={() => openUserProfile()}
                                 >
-                                    Current Plan
+                                    Manage Subscription
                                 </Button>
                             ) : (
                                 <Button
-                                    onClick={() => {
-                                        setSelectedPlan(plan.name);
-                                        setIsUpgradeOpen(true);
-                                    }}
-                                    className={`w-full h-11 text-base font-semibold ${plan.popular
-                                            ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg"
-                                            : "bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 hover:text-indigo-600"
-                                        }`}
+                                    onClick={() => openUserProfile()}
                                     variant={plan.popular ? "default" : "outline"}
+                                    className={`w-full h-11 text-base font-semibold ${plan.popular
+                                        ? "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-lg"
+                                        : "bg-white text-zinc-900 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 hover:text-indigo-600"
+                                        }`}
                                 >
                                     Upgrade to {plan.name}
                                 </Button>
@@ -216,26 +227,6 @@ export default function BillingPage() {
                     </Card>
                 ))}
             </div>
-
-            <Dialog open={isUpgradeOpen} onOpenChange={setIsUpgradeOpen}>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Upgrade to {selectedPlan}</DialogTitle>
-                        <DialogDescription>
-                            You are about to upgrade your plan to {selectedPlan}. This will unlock new features and limits.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="py-4">
-                        <p className="text-sm text-zinc-500">
-                            Secure payment processing would happen here. For now, this is a demonstration.
-                        </p>
-                    </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsUpgradeOpen(false)}>Cancel</Button>
-                        <Button className="bg-indigo-600 hover:bg-indigo-700" onClick={() => setIsUpgradeOpen(false)}>Confirm Upgrade</Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
         </div>
     );
 }

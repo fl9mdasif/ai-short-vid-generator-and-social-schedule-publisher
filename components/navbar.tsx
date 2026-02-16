@@ -46,7 +46,7 @@ export function Navbar() {
 
                 <div className="flex items-center gap-4">
                     <SignedOut>
-                        <Link href="/login">
+                        <Link href="/sign-in">
                             <Button variant="ghost" className="hidden text-zinc-400 hover:text-white md:flex">
                                 Log in
                             </Button>
