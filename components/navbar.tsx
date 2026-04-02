@@ -30,12 +30,18 @@ export function Navbar() {
                     >
                         Features
                     </Link>
-                    {/* <Link
-                        href="/dashboard/guides"
+                    <Link
+                        href="/about-us"
                         className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
                     >
-                        Guide
-                    </Link> */}
+                        About Us
+                    </Link>
+                    <Link
+                        href="/contact-us"
+                        className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
+                    >
+                        Contact
+                    </Link>
                     <Link
                         href="/#platforms"
                         className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"

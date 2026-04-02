@@ -35,10 +35,10 @@ export function Footer() {
                     <div>
                         <h4 className="text-white font-bold mb-6">Product</h4>
                         <ul className="space-y-4">
+                            <li><Link href="/about-us" className="text-zinc-400 hover:text-indigo-500 transition-colors">About Us</Link></li>
+                            <li><Link href="/contact-us" className="text-zinc-400 hover:text-indigo-500 transition-colors">Contact Us</Link></li>
                             <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">AI Generator</Link></li>
                             <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Scheduler</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Templates</Link></li>
-                            <li><Link href="" className="text-zinc-400 disabled:hover:text-indigo-500 transition-colors">API Access</Link></li>
                         </ul>
                     </div>
 
