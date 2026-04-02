@@ -4,7 +4,7 @@ import { Footer } from "@/components/footer";
 export default function CookiePolicy() {
     return (
         <div className="min-h-screen bg-black text-white selection:bg-indigo-500/30 selection:text-indigo-200">
-            <Navbar />
+
             <main className="container mx-auto px-4 py-24 md:px-6 max-w-4xl">
                 <h1 className="text-4xl font-bold mb-8">Cookie Policy</h1>
                 <div className="prose prose-invert prose-indigo max-w-none space-y-6 text-zinc-300">
@@ -62,7 +62,7 @@ export default function CookiePolicy() {
                     </section>
                 </div>
             </main>
-            <Footer />
+
         </div>
     );
 }

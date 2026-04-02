@@ -37,17 +37,17 @@ export function Footer() {
                         <ul className="space-y-4">
                             <li><Link href="/about-us" className="text-zinc-400 hover:text-indigo-500 transition-colors">About Us</Link></li>
                             <li><Link href="/contact-us" className="text-zinc-400 hover:text-indigo-500 transition-colors">Contact Us</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">AI Generator</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Scheduler</Link></li>
+                            <li><Link href="/dashboard/create" className="text-zinc-400 hover:text-indigo-500 transition-colors">Generate Video</Link></li>
+                            <li><Link href="/dashboard/videos" className="text-zinc-400 hover:text-indigo-500 transition-colors">Scheduler</Link></li>
                         </ul>
                     </div>
 
                     <div>
                         <h4 className="text-white font-bold mb-6">Resources</h4>
                         <ul className="space-y-4">
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Case Studies</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Blog</Link></li>
-                            <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Documentation</Link></li>
+                            <li><Link href="/plan" className="text-zinc-400 hover:text-indigo-500 transition-colors">Pricing Plan</Link></li>
+                            <li><Link href="https://dev-mdasif-portolio.vercel.app/blog" className="text-zinc-400 hover:text-indigo-500 transition-colors">Blog</Link></li>
+                            <li><Link href="/guide" className="text-zinc-400 hover:text-indigo-500 transition-colors">Documentation</Link></li>
                             {/* <li><Link href="#" className="text-zinc-400 hover:text-indigo-500 transition-colors">Pricing</Link></li> */}
                         </ul>
                     </div>

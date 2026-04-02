@@ -14,14 +14,14 @@ import {
     User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { CreateSeriesButton } from "@/components/dashboard/create-series-button";
+
 
 const sidebarLinks = [
     { name: "Series", href: "/dashboard", icon: LayoutGrid },
     { name: "Videos", href: "/dashboard/videos", icon: Video },
-    { name: "Guides", href: "/dashboard/guides", icon: BookOpen },
-    // { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
+    { name: "Guides", href: "/guide", icon: BookOpen },
+    { name: "Billing", href: "/dashboard/billing", icon: CreditCard },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 

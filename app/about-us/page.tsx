@@ -5,6 +5,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Users, Target, Rocket, Heart, Award, Zap } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const stats = [
     { label: "Videos Generated", value: "500k+" },
@@ -39,89 +40,141 @@ const values = [
 export default function AboutUs() {
     return (
         <div className="min-h-screen bg-black text-white selection:bg-indigo-500/30 selection:text-indigo-200">
-            <Navbar />
+
 
             <main className="pt-32 pb-20">
-                {/* Hero Section */}
-                <section className="container mx-auto px-4 md:px-6 mb-24">
-                    <div className="max-w-4xl mx-auto text-center">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6 }}
-                        >
-                            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-6">
-                                We are on a mission to <br />
-                                <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                                    democratize video creation
-                                </span>
-                            </h1>
-                            <p className="text-zinc-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto">
-                                vidMaxx was born from a simple idea: that everyone should be able to create 
-                                high-quality, viral-worthy content without needing expensive equipment 
-                                or years of technical training.
+
+
+                {/* Our Story Section - Row 1: Intro */}
+                <section className="container mx-auto px-4 md:px-6 mb-20 text-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="max-w-4xl mx-auto"
+                    >
+                        <h2 className="text-3xl md:text-5xl font-bold mb-8 tracking-tighter leading-tight">
+                            The Story of vidMaxx: <br />
+                            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                                From Manual Grind to Creative Autopilot
+                            </span>
+                        </h2>
+                        <div className="space-y-6 text-zinc-400 text-lg md:text-xl leading-relaxed">
+                            <p>
+                                Every great idea starts with a "Why." For us: <span className="text-white font-medium">Why is creating a 60-second video so exhausting?</span>
                             </p>
-                        </motion.div>
-                    </div>
+                            <p>
+                                In 2024, our team of AI enthusiasts realized that millions of potential creators were being silenced—not by a lack of ideas, but by the "Manual Grind." Writing scripts, recording voiceovers, finding visuals, and hours of tedious editing were killing creativity before it could even breathe.
+                            </p>
+                        </div>
+                    </motion.div>
                 </section>
 
-                {/* Our Story / Mission */}
-                <section className="container mx-auto px-4 md:px-6 mb-32">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                {/* Our Story Section - Row 2: Challenges & Solutions */}
+                <section className="container mx-auto px-4 md:px-6 mb-24">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+                        {/* Column 1: The Challenge */}
                         <motion.div
                             initial={{ opacity: 0, x: -30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
-                            className="relative"
+                            className="p-8 md:p-10 rounded-3xl border border-white/5 bg-zinc-900/10 backdrop-blur-sm relative overflow-hidden"
                         >
-                            <div className="absolute -top-4 -left-4 w-24 h-24 bg-indigo-600/20 rounded-full blur-2xl" />
-                            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-purple-600/20 rounded-full blur-3xl" />
-                            <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl">
-                                <Image
-                                    src="/api/placeholder/800/450"
-                                    alt="Our Mission"
-                                    width={800}
-                                    height={450}
-                                    className="object-cover opacity-60 mix-blend-luminosity"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <Target className="h-16 w-16 text-indigo-500 opacity-80" />
-                                </div>
+                            <div className="absolute top-0 right-0 p-8 opacity-5">
+                                <Rocket className="h-32 w-32" />
                             </div>
+                            <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
+                                <span className="p-2 bg-indigo-600/10 rounded-lg text-indigo-500">
+                                    <Zap className="h-6 w-6" />
+                                </span>
+                                🛠️ The Challenge
+                            </h3>
+                            <p className="text-zinc-400 mb-8 italic text-sm">
+                                Building vidMaxx wasn't just about calling an API. As engineers, we faced real-world hurdles that most people don't see:
+                            </p>
+
+                            <ul className="space-y-6">
+                                <li className="flex gap-4">
+                                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-indigo-500 shrink-0" />
+                                    <p className="text-zinc-400 text-sm leading-relaxed">
+                                        <strong className="text-white block mb-1">The Sync Struggle:</strong>
+                                        Perfecting the word-level synchronization between AI-generated voices and energetic captions.
+                                    </p>
+                                </li>
+                                <li className="flex gap-4">
+                                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-purple-500 shrink-0" />
+                                    <p className="text-zinc-400 text-sm leading-relaxed">
+                                        <strong className="text-white block mb-1">The Infrastructure Wall:</strong>
+                                        Building a scalable, serverless rendering engine using <span className="text-indigo-400 font-medium">AWS Lambda</span> and <span className="text-indigo-400 font-medium">Remotion</span>.
+                                    </p>
+                                </li>
+                                <li className="flex gap-4">
+                                    <div className="mt-1.5 h-1.5 w-1.5 rounded-full bg-pink-500 shrink-0" />
+                                    <p className="text-zinc-400 text-sm leading-relaxed">
+                                        <strong className="text-white block mb-1">The Human Touch:</strong>
+                                        Tuning <span className="text-indigo-400 font-medium">LLMs</span> like Gemini Pro to write scripts that actually feel viral-ready.
+                                    </p>
+                                </li>
+                            </ul>
                         </motion.div>
 
+                        {/* Column 2: A Solution for Millions */}
                         <motion.div
                             initial={{ opacity: 0, x: 30 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
+                            className="flex flex-col justify-center"
                         >
-                            <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-                                <span className="p-2 bg-indigo-600/10 rounded-lg text-indigo-500">
-                                    <Users className="h-6 w-6" />
+                            <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
+                                <span className="p-2 bg-purple-600/10 rounded-lg text-purple-500">
+                                    <Heart className="h-6 w-6" />
                                 </span>
-                                Our Story
-                            </h2>
-                            <div className="space-y-4 text-zinc-400 text-lg leading-relaxed">
+                                🌏 A Solution for Millions
+                            </h3>
+                            <div className="space-y-6 text-zinc-400 text-lg leading-relaxed">
                                 <p>
-                                    Founded in 2024, vidMaxx started as a small team of AI enthusiasts 
-                                    and content creators who were tired of the manual grind of scriptwriting, 
-                                    editing, and scheduling.
+                                    We built vidMaxx to give every person with a smartphone the power of a full-scale production house. We took the "heavy lifting" of the backend—the rendering, the syncing, and the scheduling—and moved it to the cloud.
                                 </p>
                                 <p>
-                                    We saw the potential of Large Language Models and generative AI 
-                                    to handle the heavy lifting, allowing creators to focus on what matters 
-                                    most: their vision and their audience.
+                                    Today, vidMaxx isn't just a tool; it's a bridge. It’s for the small business owner in Dhaka, the educator in London, and the storyteller in New York.
                                 </p>
-                                <p>
-                                    Today, vidMaxx is a comprehensive platform that handles everything 
-                                    from initial idea brainstorming to auto-publishing across the web.
+                                <p className="text-white font-medium p-6 rounded-2xl bg-indigo-600/5 border border-indigo-500/10 shadow-inner">
+                                    We solve the technical friction so that millions can focus on what truly matters: <span className="text-indigo-400">their vision and their audience.</span>
                                 </p>
                             </div>
                         </motion.div>
                     </div>
                 </section>
+
+                {/* Our Story Section - Row 3: Full Width Image */}
+                <section className="container mx-auto px-4 md:px-6 mb-32">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1 }}
+                        className="relative aspect-video rounded-[2rem] overflow-hidden border border-white/10 bg-zinc-900 shadow-2xl group"
+                    >
+                        <Image
+                            src="https://i.ibb.co/QFyZLhxS/blob.jpg"
+                            alt="The vidMaxx Team Journey"
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-1000"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-8 md:p-12">
+                            <div className="max-w-xl">
+                                <p className="text-sm font-semibold tracking-widest text-indigo-400 uppercase mb-2">Our Mission</p>
+                                <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">Empowering the next generation of storytellers.</h3>
+                                <div className="h-1 w-20 bg-indigo-600 rounded-full" />
+                            </div>
+                        </div>
+                    </motion.div>
+                </section>
+
+
 
                 {/* Stats Section */}
                 <section className="bg-zinc-950 border-y border-white/5 py-16 mb-32">
@@ -196,17 +249,17 @@ export default function AboutUs() {
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <button className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/25">
-                                Get Started Free
+                                <Link href="/dashboard/create">
+                                    Get Started Free
+                                </Link>
                             </button>
-                            <button className="px-8 py-4 bg-zinc-900 hover:bg-zinc-800 text-white font-bold rounded-xl border border-white/5 transition-all">
-                                View Pricing
-                            </button>
+
                         </div>
                     </motion.div>
                 </section>
             </main>
 
-            <Footer />
+
         </div>
     );
 }

@@ -31,6 +31,12 @@ export function Navbar() {
                         Features
                     </Link>
                     <Link
+                        href="/#platforms"
+                        className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
+                    >
+                        Platforms
+                    </Link>
+                    <Link
                         href="/about-us"
                         className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
                     >
@@ -42,18 +48,19 @@ export function Navbar() {
                     >
                         Contact
                     </Link>
+
                     <Link
-                        href="/#platforms"
+                        href="/guide"
                         className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
                     >
-                        Platforms
+                        Guide
                     </Link>
-                    {/* <Link
-                        href="#pricing"
+                    <Link
+                        href="/billing"
                         className="text-sm font-medium text-zinc-400 transition-colors hover:text-white"
                     >
-                        Pricing
-                    </Link> */}
+                        Plans
+                    </Link>
                 </nav>
 
                 <div className="flex items-center gap-4">

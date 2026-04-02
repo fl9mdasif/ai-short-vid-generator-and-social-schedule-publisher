@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 };
 
 import { ClerkProvider } from "@clerk/nextjs";
+import { LayoutWrapper } from "@/components/layout-wrapper";
 
 export default function RootLayout({
   children,
@@ -32,7 +33,9 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
           suppressHydrationWarning
         >
-          {children}
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
           <Toaster />
         </body>
       </html>

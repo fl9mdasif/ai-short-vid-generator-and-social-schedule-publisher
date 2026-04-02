@@ -47,7 +47,7 @@ export function SyncSubscriptionButton() {
             size="sm"
             onClick={handleSync}
             disabled={isSyncing}
-            className="gap-2"
+            className="gap-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
         >
             <RefreshCw className={`h-4 w-4 ${isSyncing ? "animate-spin" : ""}`} />
             {isSyncing ? "Syncing..." : "Sync Subscription"}

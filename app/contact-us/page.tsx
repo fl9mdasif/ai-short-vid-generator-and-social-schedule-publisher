@@ -67,7 +67,7 @@ export default function ContactUs() {
 
     return (
         <div className="min-h-screen bg-black text-white selection:bg-indigo-500/30 selection:text-indigo-200">
-            <Navbar />
+
 
             <main className="pt-32 pb-20">
                 <section className="container mx-auto px-4 md:px-6 mb-20 text-center">
@@ -80,7 +80,7 @@ export default function ContactUs() {
                             Get in <span className="text-indigo-500">Touch</span>
                         </h1>
                         <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-                            Have questions, suggestions, or just want to say hi? 
+                            Have questions, suggestions, or just want to say hi?
                             We'd love to hear from you. Our team typically responds within 24 hours.
                         </p>
                     </motion.div>
@@ -98,7 +98,7 @@ export default function ContactUs() {
                         >
                             <div className="p-8 rounded-3xl border border-white/5 bg-zinc-900/30 backdrop-blur-sm">
                                 <h2 className="text-2xl font-bold mb-8">Contact Information</h2>
-                                
+
                                 <div className="space-y-6">
                                     <div className="flex gap-4">
                                         <div className="h-12 w-12 rounded-2xl bg-indigo-600/10 flex items-center justify-center text-indigo-500 shrink-0">
@@ -135,7 +135,6 @@ export default function ContactUs() {
                                     <h3 className="font-semibold text-white mb-6">Follow our journey</h3>
                                     <div className="flex gap-4">
                                         {[
-                                            { icon: Twitter, href: "#" },
                                             { icon: Github, href: "https://github.com/fl9mdasif" },
                                             { icon: Linkedin, href: "https://www.linkedin.com/in/fl9mdasif/" },
                                         ].map((social, i) => (
@@ -151,19 +150,8 @@ export default function ContactUs() {
                                 </div>
                             </div>
 
-                            <div className="p-8 rounded-3xl border border-indigo-500/20 bg-indigo-600/5 relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                                    <Send className="h-24 w-24 text-indigo-500" />
-                                </div>
-                                <h3 className="text-xl font-bold mb-2">Want a custom demo?</h3>
-                                <p className="text-zinc-400 mb-6">
-                                    Schedule a 1-on-1 walkthrough with our product experts 
-                                    to see how vidMaxx can transform your workflow.
-                                </p>
-                                <Button variant="outline" className="border-indigo-500/30 text-indigo-400 hover:bg-indigo-500 hover:text-white">
-                                    Book a Call
-                                </Button>
-                            </div>
+
+
                         </motion.div>
 
                         {/* Contact Form */}
@@ -261,7 +249,7 @@ export default function ContactUs() {
                 </section>
             </main>
 
-            <Footer />
+
         </div>
     );
 }
